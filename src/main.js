@@ -1,14 +1,40 @@
 import './css/style.css';
 import gsap from 'gsap';
-import { createIcons, Phone, MessageCircle } from 'lucide';
-
+import {
+  createIcons,
+  Phone,
+  MessageCircle,
+  BookOpen,
+  Music2,
+  User,
+  Feather
+} from 'lucide';
+import { supabase } from './supabase.js';
 import closedImg from './assets/envelope/closed.png';
 import openImg from './assets/envelope/open.png';
 import paperImg from './assets/envelope/paper.png';
 import maskImg from './assets/envelope/mask.png';
+import weddingSong from './assets/audio/sen-bir-yana-dunya-bir-yana.mp3';
+import weddingVideo from './assets/video/wedding-background.mp4';
 
 document.querySelector('#app').innerHTML = `
+
+<div class="wedding-video-background" id="weddingVideoBackground">
+  <video
+    id="weddingBackgroundVideo"
+    src="${weddingVideo}"
+    muted
+    loop
+    autoplay
+    playsinline
+    preload="auto">
+  </video>
+
+  <div class="wedding-video-overlay"></div>
+</div>
+
 <section class="intro" id="intro">
+
   <p class="eyebrow">BİR HABERİMİZ VAR</p>
 
   <div class="scene" id="scene">
@@ -25,13 +51,14 @@ document.querySelector('#app').innerHTML = `
 
 <div class="paper-full" id="paperFull">
   <div class="paper-content">
-    <h1>Elçin <span>&</span> Talha</h1>
-    <p class="date">22.09.2026</p>
-    <p class="desc">Bu özel günümüzde sizleri de aramızda görmekten mutluluk duyarız.</p>
+    <h1 class="couple-names">Elçin <span>&</span> Talha</h1>
+    <p class="date">22.08.2026 / 29.08.2026</p>
+    <p class="desc">Birlikte gülmeyi çok sevdik.<br><br>Şimdi en güzel kahkahalarımızı sevdiklerimizle paylaşma zamanı.<br>Gelin, bu günü birlikte unutulmaz yapalım.<br>
+    </p>
   </div>
 
   <div class="section-nav bottom">
-    <p class="scroll-text">Kaydırmaya devam et</p>
+    <p class="scroll-text">♥</p>
     <button class="nav-arrow" data-target="countdown" aria-label="Geri sayıma geç">⌄</button>
   </div>
 </div>
@@ -233,32 +260,809 @@ document.querySelector('#app').innerHTML = `
         </div>
       </article>
     </div>
+
+    <div class="contact-extras">
+      <button
+        type="button"
+        class="contact-extra-button"
+        id="openGuestbook"
+        aria-label="Anı defterini aç">
+
+        <span class="contact-extra-icon">
+          <i data-lucide="book-open"></i>
+        </span>
+
+        <span class="contact-extra-text">
+          <strong>Anı Defteri</strong>
+          <small>Güzel dileklerini bırak</small>
+        </span>
+      </button>
+
+      <span class="contact-extra-heart" aria-hidden="true">♥</span>
+
+      <button
+        type="button"
+        class="contact-extra-button"
+        id="openSongRequest"
+        aria-label="Şarkı isteği bırak">
+
+        <span class="contact-extra-icon">
+          <i data-lucide="music-2"></i>
+        </span>
+
+        <span class="contact-extra-text">
+          <strong>Şarkı İsteği</strong>
+          <small>Bizim için bir şarkı iste</small>
+        </span>
+      </button>
+    </div>
   </div>
 
-  <div class="section-nav bottom">
-    <button class="nav-arrow" data-target="nextSection" aria-label="Sonraki sayfaya geç">⌄</button>
+</section>
+
+<section class="guestbook-section" id="guestbookSection" hidden>
+  <div class="guestbook-page-shell">
+    <button
+      type="button"
+      class="guestbook-close-button"
+      id="closeGuestbook"
+      aria-label="Anı defterini kapat">
+      ×
+    </button>
+
+    <div class="guestbook-header">
+      <div class="guestbook-header-emblem" aria-hidden="true">
+        <i data-lucide="feather"></i>
+      </div>
+
+      <h2>Anı Defterimiz</h2>
+
+      <div class="guestbook-title-divider">
+        <span></span>
+        <b>♡</b>
+        <span></span>
+      </div>
+
+      <p>
+        Bu özel günde bizimle paylaştığınız dilekler,
+        yıllar sonra bile gülümsetecek en değerli hatıralarımız olacak.
+      </p>
+    </div>
+
+    <div class="guestbook-tabs" role="tablist" aria-label="Anı defteri sekmeleri">
+      <button
+        type="button"
+        class="guestbook-tab is-active"
+        id="guestbookMessagesTab"
+        data-guestbook-tab="messages"
+        role="tab"
+        aria-selected="true">
+        <i data-lucide="message-circle"></i>
+        <span>Mesajlar (<b id="visibleMessageCount">0</b>)</span>
+      </button>
+
+      <button
+        type="button"
+        class="guestbook-tab"
+        id="guestbookWriteTab"
+        data-guestbook-tab="write"
+        role="tab"
+        aria-selected="false">
+        <i data-lucide="feather"></i>
+        <span>Anı Yaz</span>
+      </button>
+    </div>
+
+    <div class="guestbook-panel is-active" id="guestbookMessagesPanel" data-guestbook-panel="messages">
+      <div class="guestbook-section-caption">
+        <span></span>
+        <p>♡ Sizlerden Gelenler</p>
+        <span></span>
+      </div>
+
+      <div class="guestbook-loading" id="guestbookLoading">
+        Anılar yükleniyor...
+      </div>
+
+      <div class="guestbook-empty" id="guestbookEmpty" hidden>
+        <span>♡</span>
+        <h3>Henüz bir anı bırakılmadı</h3>
+        <p>Bu güzel güne ait ilk birkaç satırı siz yazabilirsiniz.</p>
+        <button type="button" id="emptyWriteButton">Anı Yaz</button>
+      </div>
+
+      <div class="guestbook-message-list" id="guestbookMessageList"></div>
+
+      <p class="guestbook-footer-note">♡ İyi ki varsınız...</p>
+    </div>
+
+    <div class="guestbook-panel" id="guestbookWritePanel" data-guestbook-panel="write">
+      <div class="guestbook-write-heading">
+        <i data-lucide="feather"></i>
+
+        <div>
+          <h3>Anı Defterine Yaz</h3>
+          <p>Sevdikleriniz için bir iz bırakın</p>
+        </div>
+      </div>
+
+      <form id="guestbookForm" novalidate>
+        <label class="guestbook-field">
+          <span>İsminiz <b>*</b></span>
+          <input
+            type="text"
+            id="guestName"
+            name="name"
+            maxlength="80"
+            placeholder="Misafir"
+            required>
+        </label>
+
+        <label class="guestbook-field">
+          <span>Güzel mesajınız</span>
+
+          <div class="guestbook-message-box">
+            <textarea
+              id="guestMessage"
+              name="message"
+              maxlength="500"
+              placeholder="Bu anı defterine yazmak istediğiniz duygularınızı, tebriklerinizi ve anılarınızı buraya aktarabilirsiniz..."
+              required></textarea>
+
+            <small><b id="messageCount">0</b> / 500</small>
+          </div>
+        </label>
+
+        <p class="guestbook-error" id="guestbookError" role="alert"></p>
+
+        <button type="submit" class="guestbook-submit-button" id="guestbookSubmit">
+          <span class="guestbook-submit-label">
+            <i data-lucide="feather"></i>
+            Anıyı Gönder
+          </span>
+          <span class="guestbook-submit-loading" aria-hidden="true"></span>
+        </button>
+
+        <p class="guestbook-approval-note">
+          ♡ Mesajınız gönderildikten sonra hemen yayınlanacaktır.
+        </p>
+      </form>
+
+      <div class="guestbook-success-inline" id="guestbookSuccessInline" hidden>
+        <span>♥</span>
+        <h3>Teşekkürler!</h3>
+        <p>Anınız bize ulaştı ve Mesajlar bölümünde yayınlandı.</p>
+        <button type="button" id="showMessagesAfterSubmit">Mesajlara Dön</button>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="next-section" id="nextSection">
-  <div class="section-nav top">
-    <button class="nav-arrow" data-target="contactSection" aria-label="İletişim sayfasına dön">⌃</button>
+<section class="song-request-section" id="songRequestSection" hidden>
+  <div class="song-request-shell">
+    <button
+      type="button"
+      class="song-request-close"
+      id="closeSongRequest"
+      aria-label="Şarkı isteğini kapat">
+      ×
+    </button>
+
+    <div class="song-request-header">
+      <div class="song-request-icon" aria-hidden="true">
+        <i data-lucide="music-2"></i>
+      </div>
+
+      <h2>Şarkı İsteği</h2>
+
+      <div class="song-request-divider">
+        <span></span>
+        <b>♥</b>
+        <span></span>
+      </div>
+
+      <p>
+        Düğünümüzde çalmasını istediğiniz şarkıları
+        bizimle paylaşın.
+      </p>
+    </div>
+
+    <form id="songRequestForm" novalidate>
+      <label class="song-request-field">
+        <span>İsminiz <b>*</b></span>
+        <input
+          type="text"
+          id="songGuestName"
+          name="name"
+          maxlength="80"
+          placeholder="Adınızı ve soyadınızı yazın"
+          required>
+      </label>
+
+      <label class="song-request-field">
+        <span>Şarkı adı <b>*</b></span>
+        <input
+          type="text"
+          id="songTitle"
+          name="song_title"
+          maxlength="120"
+          placeholder="Şarkının adını yazın"
+          required>
+      </label>
+
+      <label class="song-request-field">
+        <span>Sanatçı <b>*</b></span>
+        <input
+          type="text"
+          id="songArtist"
+          name="artist"
+          maxlength="120"
+          placeholder="Sanatçının adını yazın"
+          required>
+      </label>
+
+      <label class="song-request-field">
+        <span>Not <small>(İsteğe bağlı)</small></span>
+
+        <div class="song-request-textarea-wrap">
+          <textarea
+            id="songNote"
+            name="note"
+            maxlength="200"
+            placeholder="İsteğinizle ilgili bir not bırakabilirsiniz..."></textarea>
+
+          <small><b id="songNoteCount">0</b> / 200</small>
+        </div>
+      </label>
+
+      <p class="song-request-error" id="songRequestError" role="alert"></p>
+
+      <button
+        type="submit"
+        class="song-request-submit"
+        id="songRequestSubmit">
+        <span class="song-request-submit-label">
+          <i data-lucide="music-2"></i>
+          İsteği Gönder
+        </span>
+        <span class="song-request-loading" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <div class="song-request-success" id="songRequestSuccess" hidden>
+      <div class="song-request-success-icon" aria-hidden="true">
+        <i data-lucide="music-2"></i>
+      </div>
+
+      <h3>Şarkı isteğin bize ulaştı!</h3>
+
+      <div class="song-request-divider">
+        <span></span>
+        <b>♥</b>
+        <span></span>
+      </div>
+
+      <p>
+        Manisa’da bu şarkıyı çalmak için sabırsızlanıyoruz. ♫
+      </p>
+
+      <button type="button" id="closeSongSuccess">
+        İletişim sayfasına dön
+      </button>
+    </div>
+  </div>
+</section>
+<div class="music-player" id="musicPlayer">
+  <div
+    class="music-notes"
+    id="musicNotes"
+    aria-hidden="true">
   </div>
 
-  <h2>Devam edecek...</h2>
-</section>
+  <button
+    class="music-toggle"
+    id="musicToggle"
+    type="button"
+    aria-label="Müziği çal"
+    aria-pressed="false">
+
+    <span class="music-main-note" aria-hidden="true">♪</span>
+  </button>
+
+  <audio
+    id="backgroundMusic"
+    src="${weddingSong}"
+    preload="metadata"
+    loop>
+  </audio>
+</div>
 `;
 
 /* Lucide ikonlarını HTML oluşturulduktan sonra SVG'ye çevirir */
 createIcons({
   icons: {
     Phone,
-    MessageCircle
+    MessageCircle,
+    BookOpen,
+    Music2,
+    User,
+    Feather
   },
   attrs: {
     'stroke-width': 1.7,
     width: 23,
     height: 23
+  }
+});
+/* ===================== */
+/* MÜZİK BUTONU */
+/* ===================== */
+
+const backgroundMusic = document.querySelector('#backgroundMusic');
+const musicToggle = document.querySelector('#musicToggle');
+const musicNotes = document.querySelector('#musicNotes');
+
+let musicIsPlaying = false;
+let noteTimer = null;
+
+const noteSymbols = ['♪', '♫', '♩', '♬'];
+
+function createFloatingNote() {
+  if (!musicIsPlaying || !musicNotes) return;
+
+  const note = document.createElement('span');
+
+  note.className = 'floating-note';
+
+  note.textContent =
+    noteSymbols[Math.floor(Math.random() * noteSymbols.length)];
+note.style.left = `${8 + Math.random() * 40}px`;
+note.style.bottom = `${Math.random() * 18}px`;
+  note.style.setProperty(
+    '--note-x',
+    `${Math.round(Math.random() * 28 - 8)}px`
+  );
+
+ note.style.setProperty(
+  '--note-x',
+  `${Math.round(Math.random() * 45 - 22)}px`
+);
+  note.style.setProperty(
+    '--note-duration',
+    `${(3.2 + Math.random() * 1.3).toFixed(2)}s`
+  );
+
+  note.style.setProperty(
+    '--note-size',
+    `${Math.round(15 + Math.random() * 8)}px`
+  );
+
+  musicNotes.appendChild(note);
+
+  note.addEventListener(
+    'animationend',
+    () => note.remove(),
+    { once: true }
+  );
+}
+
+function createNoteGroup() {
+  createFloatingNote();
+
+  window.setTimeout(() => {
+    createFloatingNote();
+  }, 300);
+
+  window.setTimeout(() => {
+    createFloatingNote();
+  }, 600);
+}
+
+function startNoteAnimation() {
+  if (noteTimer) return;
+
+  createNoteGroup();
+
+  noteTimer = window.setInterval(() => {
+    createNoteGroup();
+  }, 2600);
+}
+
+function stopNoteAnimation() {
+  window.clearInterval(noteTimer);
+  noteTimer = null;
+
+  musicNotes?.replaceChildren();
+}
+
+function updateMusicButton(isPlaying) {
+  musicIsPlaying = isPlaying;
+
+  musicToggle?.classList.toggle('is-playing', isPlaying);
+
+  musicToggle?.setAttribute(
+    'aria-pressed',
+    String(isPlaying)
+  );
+
+  musicToggle?.setAttribute(
+    'aria-label',
+    isPlaying ? 'Müziği durdur' : 'Müziği çal'
+  );
+
+  if (isPlaying) {
+    startNoteAnimation();
+  } else {
+    stopNoteAnimation();
+  }
+}
+
+async function playWeddingMusic() {
+  if (!backgroundMusic) return;
+
+  try {
+    backgroundMusic.volume = 0.42;
+
+    await backgroundMusic.play();
+
+    updateMusicButton(true);
+  } catch (error) {
+    console.info(
+      'Müzik kullanıcı etkileşimi bekliyor.',
+      error
+    );
+
+    updateMusicButton(false);
+  }
+}
+
+musicToggle?.addEventListener('click', async () => {
+  if (!backgroundMusic) return;
+
+  if (backgroundMusic.paused) {
+    await playWeddingMusic();
+  } else {
+    backgroundMusic.pause();
+    updateMusicButton(false);
+  }
+});
+
+backgroundMusic?.addEventListener('play', () => {
+  updateMusicButton(true);
+});
+
+backgroundMusic?.addEventListener('pause', () => {
+  updateMusicButton(false);
+});
+
+const guestbookButton = document.querySelector('#openGuestbook');
+const songRequestButton = document.querySelector('#openSongRequest');
+const guestbookSection = document.querySelector('#guestbookSection');
+const closeGuestbookButton = document.querySelector('#closeGuestbook');
+const guestbookTabs = document.querySelectorAll('[data-guestbook-tab]');
+const guestbookPanels = document.querySelectorAll('[data-guestbook-panel]');
+const guestbookForm = document.querySelector('#guestbookForm');
+const guestNameInput = document.querySelector('#guestName');
+const guestMessageInput = document.querySelector('#guestMessage');
+const messageCount = document.querySelector('#messageCount');
+const visibleMessageCount = document.querySelector('#visibleMessageCount');
+const guestbookError = document.querySelector('#guestbookError');
+const guestbookSubmit = document.querySelector('#guestbookSubmit');
+const guestbookLoading = document.querySelector('#guestbookLoading');
+const guestbookEmpty = document.querySelector('#guestbookEmpty');
+const guestbookMessageList = document.querySelector('#guestbookMessageList');
+const guestbookSuccessInline = document.querySelector('#guestbookSuccessInline');
+const emptyWriteButton = document.querySelector('#emptyWriteButton');
+const showMessagesAfterSubmit = document.querySelector('#showMessagesAfterSubmit');
+
+[guestNameInput, guestMessageInput].forEach((field) => {
+  field?.addEventListener('keydown', (event) => {
+    event.stopPropagation();
+  });
+});
+
+function goToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+
+  section.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
+
+function setGuestbookTab(tabName) {
+  guestbookTabs.forEach((tab) => {
+    const isActive = tab.dataset.guestbookTab === tabName;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+  });
+
+  guestbookPanels.forEach((panel) => {
+    panel.classList.toggle(
+      'is-active',
+      panel.dataset.guestbookPanel === tabName
+    );
+  });
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function formatGuestbookDate(value) {
+  if (!value) return '';
+
+  return new Intl.DateTimeFormat('tr-TR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date(value)).toLocaleUpperCase('tr-TR');
+}
+
+async function loadVisibleGuestbookMessages() {
+  guestbookLoading.hidden = false;
+  guestbookEmpty.hidden = true;
+  guestbookMessageList.innerHTML = '';
+
+  try {
+    const { data, error } = await supabase
+      .from('guestbook_messages')
+      .select('id, name, message, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const messages = data || [];
+    visibleMessageCount.textContent = String(messages.length);
+    guestbookLoading.hidden = true;
+
+    if (!messages.length) {
+      guestbookEmpty.hidden = false;
+      return;
+    }
+
+    guestbookMessageList.innerHTML = messages.map((item) => {
+      const safeName = escapeHtml(item.name || 'Misafir');
+      const safeMessage = escapeHtml(item.message || '');
+      const safeDate = formatGuestbookDate(item.created_at);
+
+      return `
+        <article class="guestbook-message-card">
+          <p class="guestbook-message-text">${safeMessage}</p>
+
+          <div class="guestbook-message-meta">
+            <span>— ${safeName}</span>
+            <time>${safeDate}</time>
+          </div>
+        </article>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Anılar yüklenemedi:', error);
+    guestbookLoading.textContent =
+      'Anılar şu anda yüklenemedi. Lütfen biraz sonra tekrar deneyin.';
+  }
+}
+
+async function openGuestbook(defaultTab = 'messages') {
+  guestbookSection.hidden = false;
+  document.body.classList.add('overlay-open');
+  setGuestbookTab(defaultTab);
+
+  if (defaultTab === 'messages') {
+    await loadVisibleGuestbookMessages();
+  }
+}
+
+function closeGuestbook() {
+  guestbookSection.hidden = true;
+  document.body.classList.remove('overlay-open');
+  setGuestbookTab('messages');
+  guestbookSuccessInline.hidden = true;
+  guestbookForm.hidden = false;
+}
+
+guestbookButton?.addEventListener('click', () => {
+  openGuestbook('messages');
+});
+
+closeGuestbookButton?.addEventListener('click', closeGuestbook);
+
+guestbookTabs.forEach((tab) => {
+  tab.addEventListener('click', async () => {
+    const tabName = tab.dataset.guestbookTab;
+    setGuestbookTab(tabName);
+
+    if (tabName === 'messages') {
+      await loadVisibleGuestbookMessages();
+    } else {
+      window.setTimeout(() => {
+        guestNameInput?.focus({ preventScroll: true });
+      }, 150);
+    }
+  });
+});
+
+emptyWriteButton?.addEventListener('click', () => {
+  setGuestbookTab('write');
+  window.setTimeout(() => guestNameInput?.focus(), 100);
+});
+
+showMessagesAfterSubmit?.addEventListener('click', async () => {
+  guestbookSuccessInline.hidden = true;
+  guestbookForm.hidden = false;
+  setGuestbookTab('messages');
+  await loadVisibleGuestbookMessages();
+});
+
+const songRequestSection = document.querySelector('#songRequestSection');
+const closeSongRequestButton = document.querySelector('#closeSongRequest');
+const songRequestForm = document.querySelector('#songRequestForm');
+const songGuestNameInput = document.querySelector('#songGuestName');
+const songTitleInput = document.querySelector('#songTitle');
+const songArtistInput = document.querySelector('#songArtist');
+const songNoteInput = document.querySelector('#songNote');
+const songNoteCount = document.querySelector('#songNoteCount');
+const songRequestError = document.querySelector('#songRequestError');
+const songRequestSubmit = document.querySelector('#songRequestSubmit');
+const songRequestSuccess = document.querySelector('#songRequestSuccess');
+const closeSongSuccessButton = document.querySelector('#closeSongSuccess');
+
+function openSongRequest() {
+  songRequestSection.hidden = false;
+  document.body.classList.add('overlay-open');
+  songRequestForm.hidden = false;
+  songRequestSuccess.hidden = true;
+}
+
+function closeSongRequest() {
+  songRequestSection.hidden = true;
+  document.body.classList.remove('overlay-open');
+  songRequestForm.reset();
+  songNoteCount.textContent = '0';
+  songRequestError.textContent = '';
+  songRequestForm.hidden = false;
+  songRequestSuccess.hidden = true;
+}
+
+songRequestButton?.addEventListener('click', openSongRequest);
+closeSongRequestButton?.addEventListener('click', closeSongRequest);
+closeSongSuccessButton?.addEventListener('click', closeSongRequest);
+
+songNoteInput?.addEventListener('input', () => {
+  songNoteCount.textContent = String(songNoteInput.value.length);
+  songRequestError.textContent = '';
+});
+
+[songGuestNameInput, songTitleInput, songArtistInput, songNoteInput].forEach((field) => {
+  field?.addEventListener('keydown', (event) => {
+    event.stopPropagation();
+  });
+});
+
+songRequestForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const name = songGuestNameInput.value.trim();
+  const songTitle = songTitleInput.value.trim();
+  const artist = songArtistInput.value.trim();
+  const note = songNoteInput.value.trim();
+
+  if (!name) {
+    songRequestError.textContent = 'Lütfen isminizi yazın.';
+    songGuestNameInput.focus();
+    return;
+  }
+
+  if (!songTitle) {
+    songRequestError.textContent = 'Lütfen şarkı adını yazın.';
+    songTitleInput.focus();
+    return;
+  }
+
+  if (!artist) {
+    songRequestError.textContent = 'Lütfen sanatçı adını yazın.';
+    songArtistInput.focus();
+    return;
+  }
+
+  songRequestError.textContent = '';
+  songRequestSubmit.disabled = true;
+  songRequestSubmit.classList.add('is-loading');
+
+  try {
+    const { error } = await supabase
+      .from('song_requests')
+      .insert({
+        name,
+        song_title: songTitle,
+        artist,
+        note: note || null
+      });
+
+    if (error) throw error;
+
+    songRequestForm.reset();
+    songNoteCount.textContent = '0';
+    songRequestForm.hidden = true;
+    songRequestSuccess.hidden = false;
+  } catch (error) {
+    console.error('Şarkı isteği kaydedilemedi:', {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code
+    });
+
+    songRequestError.textContent =
+      'Şarkı isteğiniz kaydedilemedi. Lütfen biraz sonra tekrar deneyin.';
+  } finally {
+    songRequestSubmit.disabled = false;
+    songRequestSubmit.classList.remove('is-loading');
+  }
+});
+
+guestMessageInput?.addEventListener('input', () => {
+  messageCount.textContent = String(guestMessageInput.value.length);
+  guestbookError.textContent = '';
+});
+
+guestbookForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const name = guestNameInput.value.trim();
+  const message = guestMessageInput.value.trim();
+
+  if (!name) {
+    guestbookError.textContent = 'Lütfen isminizi yazın.';
+    guestNameInput.focus();
+    return;
+  }
+
+  if (!message) {
+    guestbookError.textContent = 'Lütfen anınızı veya güzel dileğinizi yazın.';
+    guestMessageInput.focus();
+    return;
+  }
+
+  guestbookError.textContent = '';
+  guestbookSubmit.disabled = true;
+  guestbookSubmit.classList.add('is-loading');
+
+  try {
+    const { error } = await supabase
+      .from('guestbook_messages')
+      .insert({
+        name,
+        message,
+        is_approved: true
+      });
+
+    if (error) throw error;
+
+    guestbookForm.reset();
+    messageCount.textContent = '0';
+    guestbookForm.hidden = true;
+    guestbookSuccessInline.hidden = false;
+  } catch (error) {
+    console.error('Anı kaydedilemedi:', {
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+      code: error?.code
+    });
+
+    guestbookError.textContent =
+      'Mesajınız kaydedilemedi. Lütfen biraz sonra tekrar deneyin.';
+  } finally {
+    guestbookSubmit.disabled = false;
+    guestbookSubmit.classList.remove('is-loading');
   }
 });
 
@@ -270,6 +1074,19 @@ const seal = document.querySelector('#seal');
 const tapText = document.querySelector('.tap-text');
 const paperFull = document.querySelector('#paperFull');
 const paperContent = document.querySelector('.paper-content');
+const weddingVideoBackground =
+  document.querySelector('#weddingVideoBackground');
+
+const weddingBackgroundVideo =
+  document.querySelector('#weddingBackgroundVideo');
+
+/* Video, zarf sayfasından itibaren aynı kaynakla kesintisiz oynar. */
+document.body.classList.add('cinematic-intro');
+weddingVideoBackground?.classList.add('is-visible');
+
+weddingBackgroundVideo?.play().catch((error) => {
+  console.info('Arka plan videosu otomatik başlatılamadı:', error);
+});
 
 gsap.set(opened, { opacity: 0 });
 gsap.set(mask, { opacity: 0 });
@@ -305,6 +1122,16 @@ let openedState = false;
 seal.addEventListener('click', () => {
   if (openedState) return;
   openedState = true;
+
+  document.body.classList.remove('cinematic-intro');
+  document.body.classList.add('video-active');
+
+  playWeddingMusic();
+  weddingVideoBackground?.classList.add('is-visible');
+
+  weddingBackgroundVideo?.play().catch((error) => {
+    console.info('Arka plan videosu başlatılamadı:', error);
+  });
 
   pulse.kill();
 
@@ -377,6 +1204,27 @@ document.addEventListener('click', (e) => {
   });
 });
 
+/* İçerik kartlarını videonun içinden beliriyormuş gibi gösterir. */
+const revealSections = document.querySelectorAll(
+  '.paper-content, .countdown-inner, .locations-content, .reminder-card, .contact-content'
+);
+
+revealSections.forEach((section) => section.classList.add('cinematic-reveal'));
+
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-in-view');
+      }
+    });
+  }, { threshold: 0.22 });
+
+  revealSections.forEach((section) => revealObserver.observe(section));
+} else {
+  revealSections.forEach((section) => section.classList.add('is-in-view'));
+}
+
 const nikahDate = new Date('2026-08-22T17:00:00').getTime();
 const dugunDate = new Date('2026-08-29T20:00:00').getTime();
 
@@ -430,14 +1278,25 @@ updateAllCounters();
 setInterval(updateAllCounters, 1000);
 
 window.addEventListener('wheel', e => {
+  if (e.target.closest('.guestbook-page-shell, .song-request-shell')) return;
   e.preventDefault();
 }, { passive: false });
 
 window.addEventListener('touchmove', e => {
+  if (e.target.closest('.guestbook-page-shell, .song-request-shell')) return;
   e.preventDefault();
 }, { passive: false });
 
 window.addEventListener('keydown', e => {
+  const target = e.target;
+
+  if (
+    target instanceof HTMLElement &&
+    target.closest('input, textarea, select, [contenteditable="true"]')
+  ) {
+    return;
+  }
+
   const keys = [
     'ArrowUp',
     'ArrowDown',
