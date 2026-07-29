@@ -4267,3 +4267,95 @@ body.video-active #weddingBackgroundVideo {
         animation-duration: 4s !important;
     }
 }
+
+/* =========================================================
+   XIAOMI / ANDROID LOKASYON OKU DÜZELTMESİ
+   ========================================================= */
+
+/*
+ * Eski mobil kuralda locations-section için height:100vh kullanılıyordu.
+ * Xiaomi/Android tarayıcı çubuğu bu yüksekliğin bir kısmını kapatabildiği için
+ * alt ok ekranın dışında kalabiliyordu.
+ */
+@media (max-width: 767px) {
+    .locations-section {
+        height: auto !important;
+        min-height: 100svh !important;
+        min-height: 100dvh !important;
+        padding-top: 58px !important;
+        padding-bottom: 78px !important;
+        overflow: hidden !important;
+    }
+
+    .locations-section .section-nav.top {
+        top: calc(max(10px, env(safe-area-inset-top)) + 4px) !important;
+    }
+
+    .locations-section .section-nav.bottom {
+        bottom: calc(max(12px, env(safe-area-inset-bottom)) + 4px) !important;
+    }
+
+    /*
+     * Lokasyon sayfası açık renkli olduğu için beyaz ok kayboluyordu.
+     * Bu sayfada oku koyu kahverengi çiziyoruz.
+     */
+    .locations-section .nav-arrow::before {
+        border-right-color: rgba(88, 59, 37, 0.96) !important;
+        border-bottom-color: rgba(88, 59, 37, 0.96) !important;
+        filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.72)) !important;
+    }
+
+    /*
+     * Çok kısa ya da geniş Android ekranlarında kartları azıcık sıkıştır.
+     * Böylece alt navigasyon için her zaman alan kalır.
+     */
+    @media (max-height: 760px) {
+        .locations-section {
+            padding-top: 48px !important;
+            padding-bottom: 64px !important;
+        }
+
+        .locations-content > h2 {
+            margin-bottom: 12px !important;
+            font-size: 27px !important;
+        }
+
+        .location-list {
+            gap: 9px !important;
+        }
+
+        .location-card {
+            padding: 9px !important;
+        }
+
+        .map-frame {
+            height: 88px !important;
+        }
+
+        .directions-button {
+            margin-top: 6px !important;
+            padding: 7px 10px !important;
+        }
+
+        .location-divider {
+            height: 10px !important;
+        }
+    }
+}
+
+/* Açık arka planlı diğer sayfalarda da ok kontrastı garanti edilir. */
+.countdown .nav-arrow::before,
+.reminder-section .nav-arrow::before,
+.contact-section .nav-arrow::before,
+.locations-section .nav-arrow::before {
+    border-right-color: rgba(88, 59, 37, 0.96) !important;
+    border-bottom-color: rgba(88, 59, 37, 0.96) !important;
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.68)) !important;
+}
+
+/* Video ve gerçek davetiye sayfasında beyaz ok korunur. */
+.paper-full .nav-arrow::before {
+    border-right-color: rgba(255, 250, 242, 0.98) !important;
+    border-bottom-color: rgba(255, 250, 242, 0.98) !important;
+    filter: drop-shadow(0 3px 5px rgba(31, 20, 13, 0.56)) !important;
+}
