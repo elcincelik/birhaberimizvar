@@ -4018,3 +4018,252 @@ body.video-active .wedding-video-overlay {
             rgba(30, 18, 8, 0.12)
         );
 }
+
+/* =========================================================
+   FINAL MOBİL DÜZELTMELERİ
+   iOS video + sabit oklar + görünür müzik notaları
+   ========================================================= */
+
+/* iOS'ta 100vh adres çubuğu nedeniyle kaymasın. */
+:root {
+    --safe-top: max(14px, env(safe-area-inset-top));
+    --safe-bottom: max(14px, env(safe-area-inset-bottom));
+    --nav-offset: 20px;
+}
+
+html,
+body,
+#app {
+    min-height: 100%;
+    min-height: 100dvh;
+}
+
+.intro,
+.paper-full,
+.countdown,
+.locations-section,
+.reminder-section,
+.contact-section {
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
+}
+
+/* iOS video katmanı */
+.wedding-video-background {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+#weddingBackgroundVideo {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    transform: translate3d(-50%, -50%, 0) scale(1.06) !important;
+    -webkit-transform: translate3d(-50%, -50%, 0) scale(1.06) !important;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+body.video-active #weddingBackgroundVideo {
+    transform: translate3d(-50%, -50%, 0) scale(1.01) !important;
+    -webkit-transform: translate3d(-50%, -50%, 0) scale(1.01) !important;
+}
+
+/*
+ * Telefon fontuna bağlı ⌃/⌄ karakteri kullanılmıyor.
+ * Ok, CSS ile çizildiği için iPhone/Android ve tüm ekranlarda aynıdır.
+ */
+.section-nav {
+    position: absolute !important;
+    left: 50% !important;
+    width: 56px !important;
+    height: 44px !important;
+    display: grid !important;
+    place-items: center !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 25000 !important;
+    pointer-events: none !important;
+}
+
+.section-nav.top {
+    top: calc(var(--safe-top) + var(--nav-offset)) !important;
+}
+
+.section-nav.bottom {
+    bottom: calc(var(--safe-bottom) + var(--nav-offset)) !important;
+}
+
+.nav-arrow {
+    position: relative !important;
+    width: 52px !important;
+    height: 42px !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    text-shadow: none !important;
+    pointer-events: auto !important;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-arrow::before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-right: 2px solid rgba(255, 250, 242, 0.98);
+    border-bottom: 2px solid rgba(255, 250, 242, 0.98);
+    filter: drop-shadow(0 3px 5px rgba(31, 20, 13, 0.56));
+}
+
+.section-nav.bottom .nav-arrow::before {
+    transform: rotate(45deg) translate(-2px, -2px);
+}
+
+.section-nav.top .nav-arrow::before {
+    transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.nav-arrow:hover,
+.nav-arrow:active {
+    transform: none !important;
+}
+
+/* İkinci sayfada ok davetiyenin arkasında kalmasın. */
+.paper-full .section-nav.bottom {
+    bottom: calc(var(--safe-bottom) + 6px) !important;
+}
+
+/* Müzik notaları her sayfada ve iOS'ta görünür. */
+.music-player {
+    overflow: visible !important;
+    isolation: isolate;
+    z-index: 50000 !important;
+}
+
+.music-notes {
+    position: absolute !important;
+    left: -8px !important;
+    bottom: 34px !important;
+    width: 96px !important;
+    height: 190px !important;
+    overflow: visible !important;
+    z-index: 50002 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.floating-note {
+    display: block !important;
+    position: absolute !important;
+    z-index: 50003 !important;
+    color: rgba(255, 246, 226, 0.98) !important;
+    opacity: 0;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: var(--note-size, 21px) !important;
+    font-weight: 700;
+    line-height: 1 !important;
+    text-shadow:
+        0 2px 4px rgba(31, 20, 13, 0.78),
+        0 0 12px rgba(181, 137, 76, 0.55) !important;
+    animation:
+        finalFloatMusicNote
+        var(--note-duration, 3.4s)
+        cubic-bezier(.18, .7, .24, 1)
+        forwards !important;
+    will-change: transform, opacity;
+}
+
+@keyframes finalFloatMusicNote {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 8px, 0) rotate(0deg) scale(.72);
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    68% {
+        opacity: .92;
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate3d(var(--note-x, 8px), -145px, 0)
+            rotate(var(--note-rotate, 8deg))
+            scale(1.12);
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --nav-offset: 8px;
+    }
+
+    .section-nav {
+        width: 52px !important;
+        height: 40px !important;
+    }
+
+    .nav-arrow {
+        width: 48px !important;
+        height: 38px !important;
+    }
+
+    .nav-arrow::before {
+        width: 13px;
+        height: 13px;
+    }
+
+    .music-notes {
+        left: -12px !important;
+        bottom: 28px !important;
+        width: 90px !important;
+        height: 175px !important;
+    }
+}
+
+/*
+ * Kullanıcı sisteminde "Hareketi Azalt" açık olsa bile video gizlenmez.
+ * Sadece geçişler sadeleştirilir.
+ */
+@media (prefers-reduced-motion: reduce) {
+    #weddingBackgroundVideo {
+        display: block !important;
+    }
+
+    .floating-note {
+        display: block !important;
+        animation-duration: 4s !important;
+    }
+}

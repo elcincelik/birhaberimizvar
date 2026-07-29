@@ -13,7 +13,7 @@ import { supabase } from './supabase.js';
 import closedImg from './assets/envelope/closed.png';
 import openImg from './assets/envelope/open.png';
 import paperImg from './assets/envelope/paper.png';
-import invitationImg from './assets/envelope/Untitled design (1).png';
+import invitationImg from './assets/envelope/invitation.png';
 import maskImg from './assets/envelope/mask.png';
 import weddingSong from './assets/audio/sen-bir-yana-dunya-bir-yana.mp3';
 import weddingVideo from './assets/video/wedding-background.mp4';
@@ -21,15 +21,19 @@ import weddingVideo from './assets/video/wedding-background.mp4';
 document.querySelector('#app').innerHTML = `
 
 <div class="wedding-video-background" id="weddingVideoBackground">
-  <video
-    id="weddingBackgroundVideo"
-    src="${weddingVideo}"
-    muted
-    loop
-    autoplay
-    playsinline
-    preload="auto">
-  </video>
+<video
+  id="weddingBackgroundVideo"
+  src="${weddingVideo}"
+  autoplay
+  muted
+  loop
+  playsinline
+  webkit-playsinline
+  preload="auto"
+  disablepictureinpicture
+  controlslist="nodownload noplaybackrate nofullscreen"
+  aria-hidden="true">
+</video>
 
   <div class="wedding-video-overlay"></div>
 </div>
@@ -606,19 +610,6 @@ createIcons({
 const backgroundMusic = document.querySelector('#backgroundMusic');
 const musicToggle = document.querySelector('#musicToggle');
 const musicNotes = document.querySelector('#musicNotes');
-const bgVideo = document.querySelector ('#weddingBackgroundVideo');
-
-
-if (bgVideo) {
-  bgVideo.muted = true;
-  bgVideo.defaultMuted = true;
-  bgVideo.playsInline = true;
-
-  bgVideo.play().catch(() => {
-    console.log("Video autoplay bekliyor.");
-  });
-
-}
 let musicIsPlaying = false;
 let noteTimer = null;
 
@@ -628,30 +619,31 @@ function createFloatingNote() {
   if (!musicIsPlaying || !musicNotes) return;
 
   const note = document.createElement('span');
-
   note.className = 'floating-note';
-
   note.textContent =
     noteSymbols[Math.floor(Math.random() * noteSymbols.length)];
-note.style.left = `${8 + Math.random() * 40}px`;
-note.style.bottom = `${Math.random() * 18}px`;
+
+  note.style.left = `${4 + Math.random() * 46}px`;
+  note.style.bottom = `${Math.random() * 14}px`;
+
   note.style.setProperty(
     '--note-x',
-    `${Math.round(Math.random() * 28 - 8)}px`
+    `${Math.round(Math.random() * 54 - 27)}px`
   );
 
- note.style.setProperty(
-  '--note-x',
-  `${Math.round(Math.random() * 45 - 22)}px`
-);
+  note.style.setProperty(
+    '--note-rotate',
+    `${Math.round(Math.random() * 34 - 17)}deg`
+  );
+
   note.style.setProperty(
     '--note-duration',
-    `${(3.2 + Math.random() * 1.3).toFixed(2)}s`
+    `${(2.8 + Math.random() * 1.2).toFixed(2)}s`
   );
 
   note.style.setProperty(
     '--note-size',
-    `${Math.round(15 + Math.random() * 8)}px`
+    `${Math.round(17 + Math.random() * 10)}px`
   );
 
   musicNotes.appendChild(note);
@@ -682,7 +674,7 @@ function startNoteAnimation() {
 
   noteTimer = window.setInterval(() => {
     createNoteGroup();
-  }, 2600);
+  }, 1700);
 }
 
 function stopNoteAnimation() {
@@ -750,6 +742,81 @@ backgroundMusic?.addEventListener('play', () => {
 
 backgroundMusic?.addEventListener('pause', () => {
   updateMusicButton(false);
+});
+
+/* ===================== */
+/* iOS / MOBİL ARKA PLAN VİDEOSU */
+/* ===================== */
+
+let backgroundVideoStarting = false;
+
+async function startBackgroundVideo() {
+  if (!weddingBackgroundVideo || backgroundVideoStarting) return;
+
+  backgroundVideoStarting = true;
+
+  weddingBackgroundVideo.muted = true;
+  weddingBackgroundVideo.defaultMuted = true;
+  weddingBackgroundVideo.playsInline = true;
+  weddingBackgroundVideo.loop = true;
+
+  weddingBackgroundVideo.setAttribute('muted', '');
+  weddingBackgroundVideo.setAttribute('autoplay', '');
+  weddingBackgroundVideo.setAttribute('playsinline', '');
+  weddingBackgroundVideo.setAttribute('webkit-playsinline', '');
+
+  try {
+    if (weddingBackgroundVideo.readyState < 2) {
+      weddingBackgroundVideo.load();
+    }
+
+    await weddingBackgroundVideo.play();
+  } catch (error) {
+    console.info('Arka plan videosu ilk etkileşimi bekliyor.', error);
+  } finally {
+    backgroundVideoStarting = false;
+  }
+}
+
+function resumeBackgroundVideo() {
+  if (!weddingBackgroundVideo) return;
+
+  if (
+    weddingBackgroundVideo.paused ||
+    weddingBackgroundVideo.ended ||
+    weddingBackgroundVideo.readyState < 2
+  ) {
+    startBackgroundVideo();
+  }
+}
+
+['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'].forEach((eventName) => {
+  weddingBackgroundVideo?.addEventListener(
+    eventName,
+    resumeBackgroundVideo,
+    { passive: true }
+  );
+});
+
+window.addEventListener('load', startBackgroundVideo);
+window.addEventListener('pageshow', startBackgroundVideo);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    window.setTimeout(startBackgroundVideo, 80);
+  }
+});
+
+/*
+ * iOS Safari/Chrome bazı koşullarda otomatik oynatmayı reddeder.
+ * İlk gerçek kullanıcı etkileşiminde video sessiz ve inline olarak başlatılır.
+ */
+['touchstart', 'pointerdown', 'click'].forEach((eventName) => {
+  document.addEventListener(
+    eventName,
+    startBackgroundVideo,
+    { once: true, passive: true, capture: true }
+  );
 });
 
 const guestbookButton = document.querySelector('#openGuestbook');
@@ -1102,9 +1169,7 @@ const weddingBackgroundVideo =
 document.body.classList.add('cinematic-intro');
 weddingVideoBackground?.classList.add('is-visible');
 
-weddingBackgroundVideo?.play().catch((error) => {
-  console.info('Arka plan videosu otomatik başlatılamadı:', error);
-});
+startBackgroundVideo();
 
 gsap.set(opened, { opacity: 0 });
 gsap.set(mask, { opacity: 0 });
@@ -1146,6 +1211,8 @@ const pulse = gsap.to(seal, {
 let openedState = false;
 
 seal.addEventListener('click', () => {
+  startBackgroundVideo();
+
   if (openedState) return;
   openedState = true;
 
@@ -1155,9 +1222,7 @@ seal.addEventListener('click', () => {
   playWeddingMusic();
   weddingVideoBackground?.classList.add('is-visible');
 
-  weddingBackgroundVideo?.play().catch((error) => {
-    console.info('Arka plan videosu başlatılamadı:', error);
-  });
+  startBackgroundVideo();
 
   pulse.kill();
 
