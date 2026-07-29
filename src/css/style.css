@@ -4359,3 +4359,406 @@ body.video-active #weddingBackgroundVideo {
     border-bottom-color: rgba(255, 250, 242, 0.98) !important;
     filter: drop-shadow(0 3px 5px rgba(31, 20, 13, 0.56)) !important;
 }
+
+/* =========================================================
+   TÜM TELEFONLAR İÇİN EVRENSEL RESPONSIVE OK SİSTEMİ
+   iPhone SE - Pro Max / Android küçük - büyük ekran
+   ========================================================= */
+
+:root {
+    --app-viewport-height: 100dvh;
+    --responsive-safe-top: max(10px, env(safe-area-inset-top));
+    --responsive-safe-bottom: max(10px, env(safe-area-inset-bottom));
+    --responsive-arrow-size: clamp(12px, 3.7vw, 17px);
+    --responsive-arrow-hit-area: clamp(42px, 12vw, 56px);
+    --responsive-nav-edge: clamp(8px, 1.8dvh, 20px);
+}
+
+/*
+ * visualViewport ile hesaplanan gerçek görünür yüksekliği kullanır.
+ * Safari/Chrome adres çubuğu açılıp kapansa bile ok ekran içinde kalır.
+ */
+.intro,
+.paper-full,
+.countdown,
+.locations-section,
+.reminder-section,
+.contact-section {
+    position: relative !important;
+    width: 100% !important;
+    min-height: var(--app-viewport-height, 100dvh) !important;
+    height: var(--app-viewport-height, 100dvh) !important;
+    max-height: none !important;
+    overflow: hidden !important;
+}
+
+/*
+ * Bütün içerik sayfalarında üst ve alt ok için güvenli alan bırakır.
+ * Böylece içerik kartı oku kapatmaz.
+ */
+.paper-full,
+.countdown,
+.locations-section,
+.reminder-section,
+.contact-section {
+    padding-top:
+        calc(
+            var(--responsive-safe-top) +
+            var(--responsive-arrow-hit-area) +
+            8px
+        ) !important;
+
+    padding-bottom:
+        calc(
+            var(--responsive-safe-bottom) +
+            var(--responsive-arrow-hit-area) +
+            8px
+        ) !important;
+}
+
+/* Ok konteyneri her cihazda viewport kenarına sabitlenir. */
+.section-nav {
+    position: absolute !important;
+    left: 50% !important;
+    width: var(--responsive-arrow-hit-area) !important;
+    height: var(--responsive-arrow-hit-area) !important;
+    display: grid !important;
+    place-items: center !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 999999 !important;
+    pointer-events: none !important;
+}
+
+.section-nav.top {
+    top:
+        calc(
+            var(--responsive-safe-top) +
+            var(--responsive-nav-edge)
+        ) !important;
+}
+
+.section-nav.bottom {
+    bottom:
+        calc(
+            var(--responsive-safe-bottom) +
+            var(--responsive-nav-edge)
+        ) !important;
+}
+
+.nav-arrow {
+    position: relative !important;
+    width: var(--responsive-arrow-hit-area) !important;
+    height: var(--responsive-arrow-hit-area) !important;
+    min-width: var(--responsive-arrow-hit-area) !important;
+    min-height: var(--responsive-arrow-hit-area) !important;
+    display: grid !important;
+    place-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 250, 242, 0.08) !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    text-shadow: none !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.nav-arrow::before {
+    content: "" !important;
+    display: block !important;
+    width: var(--responsive-arrow-size) !important;
+    height: var(--responsive-arrow-size) !important;
+    border-style: solid !important;
+    border-width: 0 2px 2px 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.section-nav.bottom .nav-arrow::before {
+    transform: translateY(-3px) rotate(45deg) !important;
+}
+
+.section-nav.top .nav-arrow::before {
+    transform: translateY(3px) rotate(225deg) !important;
+}
+
+/* Açık arka planlı sayfalarda koyu ok. */
+.countdown .nav-arrow::before,
+.locations-section .nav-arrow::before,
+.reminder-section .nav-arrow::before,
+.contact-section .nav-arrow::before {
+    border-color: rgba(83, 55, 34, 0.98) !important;
+    filter:
+        drop-shadow(0 1px 1px rgba(255, 255, 255, 0.95))
+        drop-shadow(0 2px 4px rgba(83, 55, 34, 0.20)) !important;
+}
+
+/* Video/davetiye sayfasında açık ok. */
+.paper-full .nav-arrow::before {
+    border-color: rgba(255, 250, 242, 0.98) !important;
+    filter: drop-shadow(0 3px 5px rgba(31, 20, 13, 0.58)) !important;
+}
+
+/*
+ * Hatırlatma sayfasında kart her zaman iki okun arasında kalır.
+ * SE gibi kısa ekranlarda otomatik küçülür.
+ */
+.reminder-section {
+    display: grid !important;
+    place-items: center !important;
+}
+
+.reminder-card {
+    width: min(88vw, 560px) !important;
+    min-height: 0 !important;
+    max-height:
+        calc(
+            var(--app-viewport-height, 100dvh) -
+            var(--responsive-safe-top) -
+            var(--responsive-safe-bottom) -
+            (var(--responsive-arrow-hit-area) * 2) -
+            52px
+        ) !important;
+    padding:
+        clamp(34px, 6dvh, 58px)
+        clamp(22px, 6vw, 46px)
+        clamp(30px, 5dvh, 50px) !important;
+}
+
+/* Kısa ekranlar: iPhone SE ve benzeri. */
+@media (max-height: 700px) {
+    :root {
+        --responsive-arrow-size: clamp(11px, 3.4vw, 14px);
+        --responsive-arrow-hit-area: clamp(38px, 11vw, 48px);
+        --responsive-nav-edge: 5px;
+    }
+
+    .paper-full,
+    .countdown,
+    .locations-section,
+    .reminder-section,
+    .contact-section {
+        padding-top:
+            calc(
+                var(--responsive-safe-top) +
+                var(--responsive-arrow-hit-area) +
+                4px
+            ) !important;
+
+        padding-bottom:
+            calc(
+                var(--responsive-safe-bottom) +
+                var(--responsive-arrow-hit-area) +
+                4px
+            ) !important;
+    }
+
+    .reminder-card {
+        width: min(86vw, 430px) !important;
+        padding: 30px 20px 26px !important;
+        border-radius: 19px !important;
+    }
+
+    .reminder-card::after {
+        inset: 12px !important;
+    }
+
+    .reminder-card h2 {
+        font-size: clamp(25px, 7vw, 34px) !important;
+    }
+
+    .reminder-divider {
+        margin: 14px auto 17px !important;
+    }
+
+    .reminder-text {
+        font-size: clamp(14px, 4.2vw, 18px) !important;
+        line-height: 1.4 !important;
+    }
+}
+
+/* Çok dar telefonlar: eski SE ve benzeri. */
+@media (max-width: 380px) {
+    :root {
+        --responsive-arrow-size: 12px;
+        --responsive-arrow-hit-area: 42px;
+    }
+
+    .reminder-card {
+        width: 88vw !important;
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
+
+/* Büyük Pro Max / Android ekranlarında kontrollü büyüme. */
+@media (min-width: 430px) and (min-height: 850px) {
+    :root {
+        --responsive-arrow-size: 17px;
+        --responsive-arrow-hit-area: 56px;
+        --responsive-nav-edge: 16px;
+    }
+}
+
+/* Yatay kullanımda da oklar viewport içinde kalır. */
+@media (orientation: landscape) and (max-height: 520px) {
+    :root {
+        --responsive-arrow-size: 11px;
+        --responsive-arrow-hit-area: 38px;
+        --responsive-nav-edge: 3px;
+    }
+
+    .paper-full,
+    .countdown,
+    .locations-section,
+    .reminder-section,
+    .contact-section {
+        padding-top:
+            calc(
+                var(--responsive-safe-top) +
+                var(--responsive-arrow-hit-area)
+            ) !important;
+
+        padding-bottom:
+            calc(
+                var(--responsive-safe-bottom) +
+                var(--responsive-arrow-hit-area)
+            ) !important;
+    }
+
+    .reminder-card {
+        width: min(72vw, 520px) !important;
+        padding: 22px 26px 20px !important;
+    }
+
+    .reminder-card h2 {
+        font-size: 25px !important;
+    }
+
+    .reminder-divider {
+        margin: 10px auto 12px !important;
+    }
+
+    .reminder-text {
+        font-size: 14px !important;
+    }
+}
+
+/* =========================================================
+   PREMIUM YÜKLEME EKRANI
+   Yavaş telefonlarda eksik zarf/kart görünmesini engeller
+   ========================================================= */
+
+body:not(.site-ready) {
+    overflow: hidden !important;
+}
+
+body:not(.site-ready) #app > :not(.site-loader) {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+body.site-ready #app > :not(.site-loader) {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .5s ease;
+}
+
+.site-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999999;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 50% 38%, rgba(255,255,255,.18), transparent 38%),
+        linear-gradient(180deg, #34291f 0%, #211913 100%);
+    color: #f4e8d7;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity .6s ease,
+        visibility .6s ease;
+}
+
+.site-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.site-loader-inner {
+    width: min(74vw, 320px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.site-loader-monogram {
+    margin-bottom: 26px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(28px, 8vw, 42px);
+    font-weight: 400;
+    letter-spacing: 8px;
+}
+
+.site-loader-line {
+    width: min(58vw, 230px);
+    height: 1px;
+    overflow: hidden;
+    background: rgba(255,255,255,.18);
+}
+
+.site-loader-line span {
+    display: block;
+    width: 8%;
+    height: 100%;
+    background: rgba(255,248,238,.92);
+    box-shadow: 0 0 14px rgba(255,244,225,.55);
+    transition: width .35s ease;
+}
+
+.site-loader p {
+    margin-top: 18px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,248,238,.76);
+}
+
+/* Safari alt barı açıkken ok daima görünür alanın içinde kalır. */
+@supports (-webkit-touch-callout: none) {
+    :root {
+        --responsive-safe-bottom: max(20px, env(safe-area-inset-bottom));
+        --responsive-nav-edge: clamp(10px, 2.2dvh, 24px);
+    }
+
+    .section-nav.bottom {
+        bottom:
+            calc(
+                var(--responsive-safe-bottom) +
+                var(--responsive-nav-edge) +
+                8px
+            ) !important;
+    }
+}
+
+/* Çok kısa Safari görünümünde alt ok biraz daha yukarı alınır. */
+@media (max-height: 720px) {
+    .section-nav.bottom {
+        bottom:
+            calc(
+                max(16px, env(safe-area-inset-bottom)) +
+                14px
+            ) !important;
+    }
+}

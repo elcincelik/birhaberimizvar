@@ -20,6 +20,17 @@ import weddingVideo from './assets/video/wedding-background.mp4';
 
 document.querySelector('#app').innerHTML = `
 
+
+<div class="site-loader" id="siteLoader" aria-live="polite">
+  <div class="site-loader-inner">
+    <div class="site-loader-monogram">E & T</div>
+    <div class="site-loader-line">
+      <span></span>
+    </div>
+    <p>Davetiyeniz hazırlanıyor...</p>
+  </div>
+</div>
+
 <div class="wedding-video-background" id="weddingVideoBackground">
 <video
   id="weddingBackgroundVideo"
@@ -587,6 +598,111 @@ document.querySelector('#app').innerHTML = `
 </div>
 `;
 
+
+/* ===================== */
+/* SAYFA / ASSET YÜKLEME EKRANI */
+/* ===================== */
+
+const siteLoader = document.querySelector('#siteLoader');
+const loaderProgress = document.querySelector('.site-loader-line span');
+
+function waitForImage(imageElement) {
+  if (!imageElement) return Promise.resolve();
+
+  if (imageElement.complete && imageElement.naturalWidth > 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    const finish = () => resolve();
+
+    imageElement.addEventListener('load', finish, { once: true });
+    imageElement.addEventListener('error', finish, { once: true });
+
+    window.setTimeout(finish, 8000);
+  });
+}
+
+function waitForVideo(videoElement) {
+  if (!videoElement) return Promise.resolve();
+
+  if (videoElement.readyState >= 2) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    const finish = () => resolve();
+
+    videoElement.addEventListener('loadeddata', finish, { once: true });
+    videoElement.addEventListener('canplay', finish, { once: true });
+    videoElement.addEventListener('error', finish, { once: true });
+
+    window.setTimeout(finish, 9000);
+  });
+}
+
+function waitForFonts() {
+  if (!document.fonts?.ready) {
+    return Promise.resolve();
+  }
+
+  return Promise.race([
+    document.fonts.ready,
+    new Promise((resolve) => window.setTimeout(resolve, 5000))
+  ]);
+}
+
+async function revealLoadedSite() {
+  const criticalImages = [
+    document.querySelector('.closed'),
+    document.querySelector('.opened'),
+    document.querySelector('.paper'),
+    document.querySelector('.mask'),
+    document.querySelector('#realInvitation')
+  ];
+
+  const criticalTasks = [
+    ...criticalImages.map(waitForImage),
+    waitForVideo(document.querySelector('#weddingBackgroundVideo')),
+    waitForFonts()
+  ];
+
+  let finishedCount = 0;
+  const totalCount = criticalTasks.length;
+
+  criticalTasks.forEach((task) => {
+    Promise.resolve(task).finally(() => {
+      finishedCount += 1;
+
+      if (loaderProgress) {
+        loaderProgress.style.width =
+          `${Math.round((finishedCount / totalCount) * 100)}%`;
+      }
+    });
+  });
+
+  await Promise.allSettled(criticalTasks);
+
+  document.body.classList.add('site-ready');
+
+  window.requestAnimationFrame(() => {
+    siteLoader?.classList.add('is-hidden');
+
+    window.setTimeout(() => {
+      siteLoader?.remove();
+    }, 700);
+  });
+}
+
+window.addEventListener('load', revealLoadedSite, { once: true });
+
+window.setTimeout(() => {
+  if (!document.body.classList.contains('site-ready')) {
+    revealLoadedSite();
+  }
+}, 10000);
+
+
 /* Lucide ikonlarını HTML oluşturulduktan sonra SVG'ye çevirir */
 createIcons({
   icons: {
@@ -818,6 +934,45 @@ document.addEventListener('visibilitychange', () => {
     { once: true, passive: true, capture: true }
   );
 });
+
+
+/* ===================== */
+/* GERÇEK MOBİL EKRAN YÜKSEKLİĞİ */
+/* ===================== */
+
+function updateResponsiveViewport() {
+  const viewportHeight =
+    window.visualViewport?.height ||
+    window.innerHeight ||
+    document.documentElement.clientHeight;
+
+  document.documentElement.style.setProperty(
+    '--app-viewport-height',
+    `${Math.round(viewportHeight)}px`
+  );
+}
+
+updateResponsiveViewport();
+
+window.addEventListener('resize', updateResponsiveViewport, {
+  passive: true
+});
+
+window.addEventListener('orientationchange', () => {
+  window.setTimeout(updateResponsiveViewport, 120);
+});
+
+window.visualViewport?.addEventListener(
+  'resize',
+  updateResponsiveViewport,
+  { passive: true }
+);
+
+window.visualViewport?.addEventListener(
+  'scroll',
+  updateResponsiveViewport,
+  { passive: true }
+);
 
 const guestbookButton = document.querySelector('#openGuestbook');
 const songRequestButton = document.querySelector('#openSongRequest');
