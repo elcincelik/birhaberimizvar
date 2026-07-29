@@ -63,7 +63,7 @@ document.querySelector('#app').innerHTML = `
   </div>
 
   <div class="section-nav bottom">
-    <p class="scroll-text">♥</p>
+    <p class="scroll-text"></p>
     <button class="nav-arrow" data-target="countdown" aria-label="Geri sayıma geç">⌄</button>
   </div>
 </div>
@@ -606,7 +606,19 @@ createIcons({
 const backgroundMusic = document.querySelector('#backgroundMusic');
 const musicToggle = document.querySelector('#musicToggle');
 const musicNotes = document.querySelector('#musicNotes');
+const bgVideo = document.querySelector ('#weddingBackgroundVideo');
 
+
+if (bgVideo) {
+  bgVideo.muted = true;
+  bgVideo.defaultMuted = true;
+  bgVideo.playsInline = true;
+
+  bgVideo.play().catch(() => {
+    console.log("Video autoplay bekliyor.");
+  });
+
+}
 let musicIsPlaying = false;
 let noteTimer = null;
 
