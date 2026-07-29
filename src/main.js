@@ -13,6 +13,7 @@ import { supabase } from './supabase.js';
 import closedImg from './assets/envelope/closed.png';
 import openImg from './assets/envelope/open.png';
 import paperImg from './assets/envelope/paper.png';
+import invitationImg from './assets/envelope/Untitled design (1).png';
 import maskImg from './assets/envelope/mask.png';
 import weddingSong from './assets/audio/sen-bir-yana-dunya-bir-yana.mp3';
 import weddingVideo from './assets/video/wedding-background.mp4';
@@ -50,11 +51,15 @@ document.querySelector('#app').innerHTML = `
 </section>
 
 <div class="paper-full" id="paperFull">
-  <div class="paper-content">
-    <h1 class="couple-names">Elçin <span>&</span> Talha</h1>
-    <p class="date">22.08.2026 / 29.08.2026</p>
-    <p class="desc">Birlikte gülmeyi çok sevdik.<br><br>Şimdi en güzel kahkahalarımızı sevdiklerimizle paylaşma zamanı.<br>Gelin, bu günü birlikte unutulmaz yapalım.<br>
-    </p>
+  <div class="invitation-stage" id="invitationStage">
+    <div class="invitation-glass">
+      <img
+        src="${invitationImg}"
+        class="real-invitation"
+        id="realInvitation"
+        alt="Elçin ve Talha düğün davetiyesi"
+      />
+    </div>
   </div>
 
   <div class="section-nav bottom">
@@ -1073,7 +1078,8 @@ const mask = document.querySelector('.mask');
 const seal = document.querySelector('#seal');
 const tapText = document.querySelector('.tap-text');
 const paperFull = document.querySelector('#paperFull');
-const paperContent = document.querySelector('.paper-content');
+const invitationStage = document.querySelector('#invitationStage');
+const realInvitation = document.querySelector('#realInvitation');
 const weddingVideoBackground =
   document.querySelector('#weddingVideoBackground');
 
@@ -1100,13 +1106,21 @@ gsap.set(paper, {
 
 gsap.set(paperFull, {
   autoAlpha: 0,
-  scale: 0.25,
-  display: 'none'
+  display: 'none',
+  pointerEvents: 'none'
 });
 
-gsap.set(paperContent, {
-  opacity: 0,
-  y: 30
+gsap.set(invitationStage, {
+  autoAlpha: 0,
+  y: 36,
+  scale: 0.88,
+  transformOrigin: 'center center'
+});
+
+gsap.set(realInvitation, {
+  filter: 'blur(2px)',
+  scale: 0.98,
+  transformOrigin: 'center center'
 });
 
 const pulse = gsap.to(seal, {
@@ -1138,7 +1152,7 @@ seal.addEventListener('click', () => {
   gsap.timeline()
     .to(tapText, {
       opacity: 0,
-      y: 70,
+      y: 50,
       duration: 0.25
     })
     .to(seal, {
@@ -1159,34 +1173,53 @@ seal.addEventListener('click', () => {
     .to(paper, {
       opacity: 1,
       xPercent: -50,
-      y: 70,
-      scale: 1,
-      duration: 1.3,
+      y: 18,
+      scale: 1.06,
+      duration: 1.05,
       ease: 'power3.out'
-    }, 0.75)
+    }, 0.7)
+    .to(paper, {
+      y: -8,
+      scale: 1.1,
+      duration: 0.45,
+      ease: 'power2.inOut'
+    }, 1.48)
+    .to(paper, {
+      opacity: 0,
+      scale: 1.14,
+      duration: 0.3,
+      ease: 'power2.in'
+    }, 1.72)
+    .set(paperFull, {
+      display: 'flex',
+      pointerEvents: 'auto'
+    }, 1.76)
+    .call(() => {
+      paperFull.classList.add('is-active');
+      paperFull.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, null, 1.77)
     .to(paperFull, {
       autoAlpha: 1,
-      scale: 1,
-      display: 'flex',
-      duration: 0.9,
-      ease: 'power3.out',
-      onStart: () => {
-        document.body.style.overflow = 'auto';
-        paperFull.classList.add('is-active');
-      },
-      onComplete: () => {
-        paperFull.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }, 1.8)
-    .to(paperContent, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
+      duration: 0.55,
       ease: 'power2.out'
-    }, 2.25);
+    }, 1.78)
+    .to(invitationStage, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.9,
+      ease: 'power3.out'
+    }, 1.88)
+    .to(realInvitation, {
+      filter: 'blur(0px)',
+      scale: 1,
+      duration: 0.7,
+      ease: 'power2.out'
+    }, 2.02);
+
 });
 
 document.addEventListener('click', (e) => {
@@ -1206,7 +1239,7 @@ document.addEventListener('click', (e) => {
 
 /* İçerik kartlarını videonun içinden beliriyormuş gibi gösterir. */
 const revealSections = document.querySelectorAll(
-  '.paper-content, .countdown-inner, .locations-content, .reminder-card, .contact-content'
+  '.invitation-stage, .countdown-inner, .locations-content, .reminder-card, .contact-content'
 );
 
 revealSections.forEach((section) => section.classList.add('cinematic-reveal'));
