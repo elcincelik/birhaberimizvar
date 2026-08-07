@@ -906,13 +906,6 @@ function resumeBackgroundVideo() {
   }
 }
 
-['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'].forEach((eventName) => {
-  weddingBackgroundVideo?.addEventListener(
-    eventName,
-    resumeBackgroundVideo,
-    { passive: true }
-  );
-});
 
 window.addEventListener('load', startBackgroundVideo);
 window.addEventListener('pageshow', startBackgroundVideo);
@@ -1319,6 +1312,14 @@ const weddingVideoBackground =
 
 const weddingBackgroundVideo =
   document.querySelector('#weddingBackgroundVideo');
+
+  ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'].forEach((eventName) => {
+  weddingBackgroundVideo?.addEventListener(
+    eventName,
+    resumeBackgroundVideo,
+    { passive: true }
+  );
+});
 
 /* Video, zarf sayfasından itibaren aynı kaynakla kesintisiz oynar. */
 document.body.classList.add('cinematic-intro');
