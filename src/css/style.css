@@ -5013,3 +5013,14 @@ html {
     margin-left: auto !important;
     margin-right: auto !important;
 }
+
+/* COUNTDOWN — SADECE YATAY HİZA DÜZELTME
+   Kart boyutu, yüksekliği, padding ve ok konumları DEĞİŞMEZ. */
+@media (max-width: 767px) {
+    .countdown > .countdown-inner {
+        position: relative !important;
+        left: -3px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
