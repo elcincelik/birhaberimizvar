@@ -1127,6 +1127,10 @@ async function openGuestbook(defaultTab = 'messages') {
 }
 
 function closeGuestbook() {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
   guestbookSection.hidden = true;
   document.body.classList.remove('overlay-open');
 
@@ -1151,17 +1155,12 @@ guestbookTabs.forEach((tab) => {
 
     if (tabName === 'messages') {
       await loadVisibleGuestbookMessages();
-    } else {
-      window.setTimeout(() => {
-        guestNameInput?.focus({ preventScroll: true });
-      }, 150);
     }
   });
 });
 
 emptyWriteButton?.addEventListener('click', () => {
   setGuestbookTab('write');
-  window.setTimeout(() => guestNameInput?.focus(), 100);
 });
 
 showMessagesAfterSubmit?.addEventListener('click', async () => {
@@ -1193,27 +1192,35 @@ function openSongRequest() {
 
 function goToContactSection() {
   const contactSection = document.getElementById('contactSection');
-
   if (!contactSection) return;
 
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
 
+  document.body.classList.remove('keyboard-open');
+  updateResponsiveViewport();
+
   const scrollToContact = () => {
-    contactSection.scrollIntoView({
-      behavior: 'auto',
-      block: 'start'
-    });
+    const top = contactSection.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top, left: 0, behavior: 'auto' });
   };
 
-  // Önce normal browser
-  requestAnimationFrame(scrollToContact);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(scrollToContact);
+  });
 
-  // Sonra özellikle iOS Safari klavye/viewport toparlandıktan sonra
-  setTimeout(scrollToContact, 250);
+  window.setTimeout(() => {
+    updateResponsiveViewport();
+    scrollToContact();
+  }, 350);
 }
+
 function closeSongRequest() {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
   songRequestSection.hidden = true;
   document.body.classList.remove('overlay-open');
 
@@ -1229,27 +1236,8 @@ function closeSongRequest() {
 
 songRequestButton?.addEventListener('click', openSongRequest);
 closeSongRequestButton?.addEventListener('click', closeSongRequest);
-closeSongSuccessButton?.addEventListener('click', () => {
-  // Açık input/textarea varsa focus'u kaldır, klavyeyi kapat
-  if (document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
+closeSongSuccessButton?.addEventListener('click', closeSongRequest);
 
-  // Şarkı modalını kapat
-  closeSongRequest();
-
-  // Safari'nin klavyeyi ve viewport'u toparlamasını bekle
-  window.setTimeout(() => {
-    const contactSection = document.getElementById('contactSection');
-
-    if (!contactSection) return;
-
-    contactSection.scrollIntoView({
-      behavior: 'auto',
-      block: 'start'
-    });
-  }, 250);
-});
 songNoteInput?.addEventListener('input', () => {
   songNoteCount.textContent = String(songNoteInput.value.length);
   songRequestError.textContent = '';
