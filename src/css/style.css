@@ -5014,6 +5014,7 @@ html {
         transform: none !important;
         zoom: 1 !important;
         -webkit-appearance: none;
+        appearance: none;
     }
 
     .guestbook-field input,
