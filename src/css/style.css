@@ -4900,4 +4900,96 @@ body.site-ready #app > :not(.site-loader) {
         --nav-icon-size: 9px;
         --nav-edge: 13px;
     }
+
+    /* =========================================================
+   iOS INPUT ZOOM FIX + RESPONSIVE MODALS
+   ========================================================= */
+
+.guestbook-field input,
+.guestbook-message-box textarea,
+.song-request-field input,
+.song-request-textarea-wrap textarea {
+    font-size: 16px !important;
+}
+
+/* Mobil cihazlarda modal ekranı stabil tut */
+@media (max-width: 767px) {
+
+    .guestbook-section,
+    .song-request-section {
+        position: fixed !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: var(--app-viewport-height, 100dvh) !important;
+        min-height: 0 !important;
+
+        padding:
+            max(8px, env(safe-area-inset-top))
+            8px
+            max(8px, env(safe-area-inset-bottom)) !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        overflow: hidden !important;
+    }
+
+    .guestbook-section[hidden],
+    .song-request-section[hidden] {
+        display: none !important;
+    }
+
+    .guestbook-page-shell,
+    .song-request-shell {
+        width: min(100%, 520px) !important;
+
+        height: auto !important;
+
+        max-height:
+            calc(
+                var(--app-viewport-height, 100dvh)
+                - max(16px, env(safe-area-inset-top))
+                - max(16px, env(safe-area-inset-bottom))
+            ) !important;
+
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+
+        -webkit-overflow-scrolling: touch;
+
+        margin: auto !important;
+
+        transform: none !important;
+        zoom: 1 !important;
+    }
+
+    .guestbook-field input,
+    .guestbook-message-box textarea,
+    .song-request-field input,
+    .song-request-textarea-wrap textarea {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+}
+
+/* Çok küçük telefonlar */
+@media (max-width: 390px) {
+
+    .guestbook-page-shell,
+    .song-request-shell {
+        border-radius: 16px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .guestbook-field input,
+    .song-request-field input {
+        height: 42px !important;
+    }
+}
+
+
 }

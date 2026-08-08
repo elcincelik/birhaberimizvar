@@ -971,6 +971,12 @@ function updateResponsiveViewport() {
     '--app-viewport-height',
     `${Math.round(viewportHeight)}px`
   );
+
+  document.body.classList.toggle(
+    'keyboard-open',
+    window.innerHeight - viewportHeight > 150
+  );
+
 }
 
 updateResponsiveViewport();
@@ -1123,9 +1129,13 @@ async function openGuestbook(defaultTab = 'messages') {
 function closeGuestbook() {
   guestbookSection.hidden = true;
   document.body.classList.remove('overlay-open');
+
   setGuestbookTab('messages');
+
   guestbookSuccessInline.hidden = true;
   guestbookForm.hidden = false;
+
+  goToContactSection();
 }
 
 guestbookButton?.addEventListener('click', () => {
@@ -1181,14 +1191,31 @@ function openSongRequest() {
   songRequestSuccess.hidden = true;
 }
 
+function goToContactSection() {
+  const contactSection =
+    document.getElementById('contactSection');
+
+  if (!contactSection) return;
+
+  window.requestAnimationFrame(() => {
+    contactSection.scrollIntoView({
+      behavior: 'instant',
+      block: 'start'
+    });
+  });
+}
 function closeSongRequest() {
   songRequestSection.hidden = true;
   document.body.classList.remove('overlay-open');
+
   songRequestForm.reset();
   songNoteCount.textContent = '0';
   songRequestError.textContent = '';
+
   songRequestForm.hidden = false;
   songRequestSuccess.hidden = true;
+
+  goToContactSection();
 }
 
 songRequestButton?.addEventListener('click', openSongRequest);
