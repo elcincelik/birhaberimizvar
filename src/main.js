@@ -15,7 +15,7 @@ import openImg from './assets/envelope/open.png';
 import paperImg from './assets/envelope/paper.png';
 import invitationImg from './assets/envelope/invitation.png';
 import maskImg from './assets/envelope/mask.png';
-import weddingSong from './assets/audio/sen-bir-yana-dunya-bir-yana.mp3';
+import weddingSong from './assets/audio/weddingsong.mp3';
 import weddingVideo from './assets/video/wedding-background.mp4';
 
 document.querySelector('#app').innerHTML = `
@@ -860,6 +860,34 @@ backgroundMusic?.addEventListener('pause', () => {
   updateMusicButton(false);
 });
 
+
+let musicWasPlayingBeforeHide = false;
+
+function pauseMusicWhenPageHidden() {
+  if (!backgroundMusic || backgroundMusic.paused) return;
+
+  musicWasPlayingBeforeHide = true;
+  backgroundMusic.pause();
+  updateMusicButton(false);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    pauseMusicWhenPageHidden();
+    return;
+  }
+
+  if (musicWasPlayingBeforeHide) {
+    musicWasPlayingBeforeHide = false;
+
+    playWeddingMusic().catch(() => {
+      // Safari tekrar otomatik oynatmaya izin vermezse
+      // kullanıcı müzik butonuna dokunarak devam ettirebilir.
+    });
+  }
+});
+
+window.addEventListener('pagehide', pauseMusicWhenPageHidden);
 /* ===================== */
 /* iOS / MOBİL ARKA PLAN VİDEOSU */
 /* ===================== */
