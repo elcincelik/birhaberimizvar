@@ -1127,19 +1127,17 @@ async function openGuestbook(defaultTab = 'messages') {
 }
 
 function closeGuestbook() {
-  if (document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
+  // Önce arka planı iletişim sayfasına anında taşı, sonra overlay'i kapat.
+  goToContactSectionInstant();
 
-  guestbookSection.hidden = true;
-  document.body.classList.remove('overlay-open');
+  requestAnimationFrame(() => {
+    guestbookSection.hidden = true;
+    document.body.classList.remove('overlay-open');
 
-  setGuestbookTab('messages');
-
-  guestbookSuccessInline.hidden = true;
-  guestbookForm.hidden = false;
-
-  goToContactSection();
+    setGuestbookTab('messages');
+    guestbookSuccessInline.hidden = true;
+    guestbookForm.hidden = false;
+  });
 }
 
 guestbookButton?.addEventListener('click', () => {
@@ -1155,12 +1153,17 @@ guestbookTabs.forEach((tab) => {
 
     if (tabName === 'messages') {
       await loadVisibleGuestbookMessages();
+    } else {
+      window.setTimeout(() => {
+        guestNameInput?.focus({ preventScroll: true });
+      }, 150);
     }
   });
 });
 
 emptyWriteButton?.addEventListener('click', () => {
   setGuestbookTab('write');
+  window.setTimeout(() => guestNameInput?.focus(), 100);
 });
 
 showMessagesAfterSubmit?.addEventListener('click', async () => {
@@ -1190,7 +1193,7 @@ function openSongRequest() {
   songRequestSuccess.hidden = true;
 }
 
-function goToContactSection() {
+function goToContactSectionInstant() {
   const contactSection = document.getElementById('contactSection');
   if (!contactSection) return;
 
@@ -1198,40 +1201,35 @@ function goToContactSection() {
     document.activeElement.blur();
   }
 
-  document.body.classList.remove('keyboard-open');
-  updateResponsiveViewport();
+  // Global html { scroll-behavior: smooth } kuralını geçici olarak devre dışı bırak.
+  const html = document.documentElement;
+  const previousInlineScrollBehavior = html.style.scrollBehavior;
+  html.style.scrollBehavior = 'auto';
 
-  const scrollToContact = () => {
-    const top = contactSection.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top, left: 0, behavior: 'auto' });
-  };
+  const contactTop = window.scrollY + contactSection.getBoundingClientRect().top;
+
+  // Overlay hâlâ görünürken arka planı iletişim bölümüne anında taşı.
+  window.scrollTo(0, contactTop);
 
   requestAnimationFrame(() => {
-    requestAnimationFrame(scrollToContact);
+    html.style.scrollBehavior = previousInlineScrollBehavior;
   });
-
-  window.setTimeout(() => {
-    updateResponsiveViewport();
-    scrollToContact();
-  }, 350);
 }
 
 function closeSongRequest() {
-  if (document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
+  // Önce arka planı iletişim sayfasına anında taşı, sonra overlay'i kapat.
+  goToContactSectionInstant();
 
-  songRequestSection.hidden = true;
-  document.body.classList.remove('overlay-open');
+  requestAnimationFrame(() => {
+    songRequestSection.hidden = true;
+    document.body.classList.remove('overlay-open');
 
-  songRequestForm.reset();
-  songNoteCount.textContent = '0';
-  songRequestError.textContent = '';
-
-  songRequestForm.hidden = false;
-  songRequestSuccess.hidden = true;
-
-  goToContactSection();
+    songRequestForm.reset();
+    songNoteCount.textContent = '0';
+    songRequestError.textContent = '';
+    songRequestForm.hidden = false;
+    songRequestSuccess.hidden = true;
+  });
 }
 
 songRequestButton?.addEventListener('click', openSongRequest);

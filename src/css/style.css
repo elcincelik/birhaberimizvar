@@ -4903,7 +4903,10 @@ body.site-ready #app > :not(.site-loader) {
 }
 
 /* =========================================================
-   STABLE MOBILE FORMS / iOS SAFARI
+   FINAL iOS / MOBILE FORM FIX
+   - Safari input zoom engeli
+   - Overlay her zaman tam ekran kalır
+   - Klavye açıldığında sadece iç kart görünür alana uyar
    ========================================================= */
 
 html {
@@ -4911,37 +4914,31 @@ html {
     text-size-adjust: 100%;
 }
 
-.guestbook-section,
-.song-request-section {
-    touch-action: pan-y;
-}
-
-.guestbook-section input,
-.guestbook-section textarea,
-.song-request-section input,
-.song-request-section textarea {
-    pointer-events: auto;
-    touch-action: manipulation;
-    -webkit-user-select: text;
-    user-select: text;
-}
-
 @media (max-width: 767px) {
     .guestbook-section,
     .song-request-section {
         position: fixed !important;
         inset: 0 !important;
+        z-index: 50000 !important;
+
         width: 100% !important;
-        height: var(--app-viewport-height, 100dvh) !important;
-        min-height: 0 !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
         padding:
             max(8px, env(safe-area-inset-top))
             8px
             max(8px, env(safe-area-inset-bottom)) !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+
         overflow: hidden !important;
+
+        background:
+            radial-gradient(circle at 50% 0%, rgba(255,255,255,.72), transparent 38%),
+            linear-gradient(180deg, #f8efdf, #f2e7d8) !important;
     }
 
     .guestbook-section[hidden],
@@ -4951,16 +4948,20 @@ html {
 
     .guestbook-page-shell,
     .song-request-shell {
-        width: min(100%, 520px) !important;
+        width: calc(100% - 16px) !important;
+        max-width: 520px !important;
         height: auto !important;
         max-height: calc(var(--app-viewport-height, 100dvh) - 16px) !important;
+
         margin: auto !important;
         overflow-y: auto !important;
         overscroll-behavior: contain !important;
         -webkit-overflow-scrolling: touch;
+
+        transform: none !important;
+        zoom: 1 !important;
     }
 
-    /* iOS Safari does not auto-zoom controls at 16px or above. */
     .guestbook-section input,
     .guestbook-section textarea,
     .guestbook-section select,
@@ -4971,6 +4972,8 @@ html {
         line-height: 1.4 !important;
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
+        -webkit-appearance: none;
+        appearance: none;
     }
 
     .guestbook-field input,
@@ -4985,23 +4988,21 @@ html {
 
     body.keyboard-open .guestbook-page-shell,
     body.keyboard-open .song-request-shell {
-        width: 100% !important;
-        max-height: var(--app-viewport-height, 100dvh) !important;
-        margin: 0 auto !important;
-        border-radius: 14px !important;
+        margin-top: max(6px, env(safe-area-inset-top)) !important;
+        max-height: calc(var(--app-viewport-height, 100dvh) - 12px) !important;
     }
 }
 
 @media (max-width: 390px) {
     .guestbook-page-shell,
     .song-request-shell {
+        border-radius: 16px !important;
         padding-left: 12px !important;
         padding-right: 12px !important;
-        border-radius: 16px !important;
     }
 
     .guestbook-field input,
     .song-request-field input {
-        min-height: 42px !important;
+        height: 42px !important;
     }
 }
