@@ -4991,5 +4991,39 @@ body.site-ready #app > :not(.site-loader) {
     }
 }
 
+/* =========================================================
+   FINAL iOS INPUT ZOOM FIX
+   BU BLOK STYLE.CSS'IN EN SONUNDA KALMALI
+   ========================================================= */
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+@media (max-width: 767px) {
+
+    .guestbook-section input,
+    .guestbook-section textarea,
+    .guestbook-section select,
+    .song-request-section input,
+    .song-request-section textarea,
+    .song-request-section select {
+        font-size: 16px !important;
+        line-height: 1.4 !important;
+        transform: none !important;
+        zoom: 1 !important;
+        -webkit-appearance: none;
+    }
+
+    .guestbook-field input,
+    .song-request-field input {
+        min-height: 44px !important;
+    }
+
+    .guestbook-message-box textarea,
+    .song-request-textarea-wrap textarea {
+        font-size: 16px !important;
+    }
+}
 }
