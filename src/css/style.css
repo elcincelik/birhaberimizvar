@@ -5006,3 +5006,10 @@ html {
         height: 42px !important;
     }
 }
+
+
+/* COUNTDOWN — SADECE YATAY ORTALA */
+.countdown > .countdown-inner {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
