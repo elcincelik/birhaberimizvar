@@ -134,8 +134,8 @@ document.querySelector('#app').innerHTML = `
         <div class="location-heading">
           <div>
             <p class="location-type">NİKAH</p>
-            <h3>Kuğu Gölü Davet - Salon Lotus<br></h3>
-            <p class="location-city">İstanbul · Maltepe · 17:30 </p>
+            <h3>Kuğu Gölü Davet · Salon Lotus · 17:30 <br></h3>
+            <p class="location-city">İstanbul · Maltepe</p>
           </div>
         </div>
 
@@ -165,8 +165,8 @@ document.querySelector('#app').innerHTML = `
         <div class="location-heading">
           <div>
             <p class="location-type">DÜĞÜN</p>
-            <h3>Flamingo Event Hall</h3>
-            <p class="location-city">Manisa · Salihli · 20:00</p>
+            <h3>Flamingo Event Hall · 20:00</h3>
+            <p class="location-city">Manisa · Salihli</p>
           </div>
         </div>
 
