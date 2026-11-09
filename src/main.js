@@ -1563,6 +1563,16 @@ if ('IntersectionObserver' in window) {
 const nikahDate = new Date('2026-08-22T17:00:00').getTime();
 const dugunDate = new Date('2026-08-29T20:00:00').getTime();
 
+// Yerel önizleme: ?previewDate=2026-08-01T12:00:00+03:00
+const countdownStartedAt = Date.now();
+const previewDateParam = import.meta.env.DEV
+  ? new URLSearchParams(window.location.search).get('previewDate')
+  : null;
+const previewDate = previewDateParam ? Date.parse(previewDateParam) : NaN;
+const countdownTimeOffset = Number.isFinite(previewDate)
+  ? previewDate - countdownStartedAt
+  : 0;
+
 function setFinishedMessage(prefix) {
   if (prefix === 'nikah') {
     document.querySelector('#nikahCountdown').innerHTML = `
@@ -1585,7 +1595,7 @@ function setFinishedMessage(prefix) {
 }
 
 function updateCounter(date, prefix) {
-  const now = new Date().getTime();
+  const now = Date.now() + countdownTimeOffset;
   const distance = date - now;
 
   if (distance <= 0) {
