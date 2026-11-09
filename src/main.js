@@ -18,6 +18,12 @@ import maskImg from './assets/envelope/mask.png';
 import weddingSong from './assets/audio/weddingsong.mp3';
 import weddingVideo from './assets/video/wedding-background.mp4';
 
+/* Sayfa yenilenince tarayıcı eski kaydırma yerine dönmesin, zarftan başlasın */
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+window.addEventListener('pageshow', () => window.scrollTo(0, 0));
 document.querySelector('#app').innerHTML = `
 
 
@@ -1656,3 +1662,5 @@ window.addEventListener('keydown', e => {
     e.preventDefault();
   }
 });
+
+import('./slides.js');
