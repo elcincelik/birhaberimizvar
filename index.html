@@ -33,121 +33,220 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
 
     <link rel="icon" type="image/png" href="/heart.png" />
     <link rel="apple-touch-icon" href="/heart.png" />
     <link rel="stylesheet" href="/src/css/home.css" />
+    <script type="module" src="/src/home.js"></script>
   </head>
 
-  <body>
+  <body data-page="home">
     <header class="topbar">
-      <div class="container">
-        <a href="/" class="logo">Bir Haberimiz <span>Var</span></a>
-        <nav class="nav-links">
-          <a href="#kategoriler">Etkinlikler</a>
-          <a href="#nasil">Nasıl çalışır</a>
-          <a href="#ozellikler">Özellikler</a>
-          <a href="#ornek">Örnek</a>
+      <div class="container topbar-inner">
+        <a href="/" class="logo" aria-label="Bir Haberimiz Var ana sayfa">Bir Haberimiz <span>Var</span></a>
+        <nav class="nav-links" aria-label="Ana menü">
+          <a href="#tasarimlar" data-i18n="nav.designs">Tasarımlar</a>
+          <a href="#ozellikler" data-i18n="nav.features">Özellikler</a>
+          <a href="#nasil" data-i18n="nav.how">Nasıl çalışır</a>
+          <a href="#sss" data-i18n="nav.faq">SSS</a>
         </nav>
-        <a href="#ornek" class="btn btn-primary btn-small">Örneği gör</a>
+        <div class="topbar-actions">
+          <div class="lang-switch" role="group" aria-label="Dil / Language">
+            <button type="button" data-lang="tr" aria-pressed="true">TR</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <a href="/giris/" class="btn btn-outline btn-small" id="authLink" data-i18n="nav.login">Giriş yap</a>
+          <div class="account" id="account" hidden>
+            <button type="button" class="account-btn" id="accountBtn" aria-haspopup="true" aria-expanded="false">
+              <span class="avatar" id="accountInitial">?</span>
+              <span class="account-label" data-i18n="nav.account">Hesabım</span>
+            </button>
+            <div class="account-menu" id="accountMenu" hidden>
+              <p class="account-email" id="accountEmail"></p>
+              <a href="/panel/" data-i18n="nav.panel">Panelim</a>
+              <button type="button" id="logoutBtn" data-i18n="nav.logout">Çıkış yap</button>
+            </div>
+          </div>
+          <a href="/kapi/" class="btn btn-primary btn-small hide-xs" data-i18n="nav.demo">Örneği gör</a>
+        </div>
       </div>
     </header>
 
     <main>
+      <!-- HERO -->
       <section class="hero">
-        <div class="container">
-          <p class="eyebrow">ONLINE DAVETİYE</p>
-          <h1>En güzel haberini <em>şık bir davetiyeyle</em> duyur</h1>
-          <p class="lead">
-            Düğün, nişan, doğum günü ve daha fazlası için kişiye özel davetiye sayfası.
-            Linki WhatsApp'tan gönder, misafirlerin tek dokunuşla açsın.
-          </p>
-          <div class="hero-buttons">
-            <a href="/elcintalha/" class="btn btn-primary">Canlı örneği gör</a>
-            <a href="#kategoriler" class="btn btn-ghost">Etkinlikleri incele</a>
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow reveal"><span class="dot"></span> <span data-i18n="hero.eyebrow">Online davetiye</span></p>
+            <h1 class="reveal" data-i18n="hero.title">Büyük haberinizi <mark>tek bir linkle</mark> paylaşın.</h1>
+            <p class="lead reveal" data-i18n="hero.lead">
+              Düğün, nişan, kına, doğum günü… Size özel davetiye sayfasını WhatsApp'tan gönderin;
+              konum, geri sayım ve katılım yanıtları misafirlerinizin cebinde.
+            </p>
+            <div class="hero-actions reveal">
+              <a href="/editor/" class="btn btn-primary" data-i18n="hero.create">Davetiyeni oluştur</a>
+              <a href="/kapi/" class="btn btn-outline" data-i18n="hero.cta">Canlı örneği aç</a>
+            </div>
+            <ul class="hero-points reveal">
+              <li><i data-lucide="check"></i> <span data-i18n="hero.p1">Uygulama gerekmez</span></li>
+              <li><i data-lucide="check"></i> <span data-i18n="hero.p2">Telefon &amp; bilgisayar</span></li>
+              <li><i data-lucide="check"></i> <span data-i18n="hero.p3">LCV takibi</span></li>
+            </ul>
           </div>
 
-          <div class="phone-wrap">
-            <div class="phone">
-              <div class="phone-screen">
-                <small>BİR HABERİMİZ VAR</small>
-                <h3>Elçin &amp; Talha</h3>
-                <span class="heart">♥</span>
-                <p class="date">29 Ağustos 2026</p>
-                <span class="mini-btn">Yol Tarifi Al</span>
+          <div class="hero-visual reveal" aria-hidden="true">
+            <div class="stack-card stack-back">
+              <img src="/src/assets/home/zarf.jpg" alt="" />
+            </div>
+            <div class="stack-card stack-front">
+              <img src="/src/assets/themes/sakayik/door-mobile.jpg" alt="" />
+              <img class="seal" src="/src/assets/themes/sakayik/seal.png" alt="" />
+            </div>
+            <div class="float-tag tag-a"><i data-lucide="mail-check"></i> <span data-i18n="hero.tagA">Ayşe katılıyor · 2 kişi</span></div>
+            <div class="float-tag tag-b"><i data-lucide="hourglass"></i> <span data-i18n="hero.tagB">42 gün kaldı</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TASARIMLAR -->
+      <section class="block" id="tasarimlar">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <p class="eyebrow" data-i18n="designs.eyebrow">Tasarımlar</p>
+              <h2 data-i18n="designs.title">Her biri bir açılış sahnesi</h2>
+            </div>
+            <p data-i18n="designs.text">Mühre dokunun, kapı açılsın ya da zarf aralansın. Davetiyeniz ilk saniyeden etkilesin.</p>
+          </div>
+
+          <div class="designs">
+            <a href="/kapi/" class="design reveal">
+              <div class="design-media">
+                <img src="/src/assets/themes/sakayik/door-mobile.jpg" alt="Şakayıklı kapı davetiye" loading="lazy" />
+                <img class="seal" src="/src/assets/themes/sakayik/seal.png" alt="" loading="lazy" />
+              </div>
+              <div class="design-info">
+                <div><h3 data-i18n="designs.d1">Kapı · Şakayık</h3><p data-i18n="designs.d1s">Mühürlü kapı, çiçekli kemer</p></div>
+                <span class="go"><i data-lucide="arrow-up-right"></i></span>
+              </div>
+            </a>
+
+            <a href="/elcintalha/" class="design reveal">
+              <div class="design-media design-media--envelope">
+                <img src="/src/assets/home/zarf.jpg" alt="Bordo mühürlü zarf davetiye" loading="lazy" />
+              </div>
+              <div class="design-info">
+                <div><h3 data-i18n="designs.d2">Zarf</h3><p data-i18n="designs.d2s">Kraft zarf, bordo mum mühür</p></div>
+                <span class="go"><i data-lucide="arrow-up-right"></i></span>
+              </div>
+            </a>
+
+            <div class="design design--soon reveal">
+              <div class="design-media design-media--soon">
+                <i data-lucide="flower-2"></i>
+                <span data-i18n="designs.soonText">Zeytin, Lale<br />ve daha fazlası</span>
+              </div>
+              <div class="design-info">
+                <div><h3 data-i18n="designs.soon">Yakında</h3><p data-i18n="designs.soonSub">Yeni temalar hazırlanıyor</p></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="block" id="kategoriler">
+      <!-- ÖZELLİKLER -->
+      <section class="block block-paper" id="ozellikler">
         <div class="container">
-          <div class="section-title">
-            <h2>Her özel gün için</h2>
-            <p>Etkinliğine uygun şablonu seç, bilgilerini ekle.</p>
+          <div class="section-head section-head--center reveal">
+            <p class="eyebrow" data-i18n="features.eyebrow">Özellikler</p>
+            <h2 data-i18n="features.title">Misafirleriniz için her şey bir arada</h2>
           </div>
-          <div class="grid">
-            <div class="card"><div class="emoji">💍</div><h3>Düğün</h3><p>Nikah ve düğün davetiyeleri</p></div>
-            <div class="card"><div class="emoji">🥂</div><h3>Nişan</h3><p>Nişan ve söz</p></div>
-            <div class="card"><div class="emoji">🌿</div><h3>Kına</h3><p>Kına gecesi</p></div>
-            <div class="card"><div class="emoji">🎂</div><h3>Doğum Günü</h3><p>Her yaş için</p></div>
-            <div class="card"><div class="emoji">🍼</div><h3>Baby Shower</h3><p>Bebek müjdesi</p></div>
-            <div class="card"><div class="emoji">🎈</div><h3>Diğer</h3><p>Sünnet, mezuniyet ve daha fazlası</p></div>
+
+          <div class="feature-grid">
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="mail-check"></i></span><h3 data-i18n="features.f1">LCV</h3><p data-i18n="features.f1s">"Orada olacağım" ya da "Gelemiyorum"; kişi sayısıyla birlikte kaydedilir.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="hourglass"></i></span><h3 data-i18n="features.f2">Geri sayım</h3><p data-i18n="features.f2s">Büyük güne kalan gün, saat, dakika ve saniye.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="map-pin"></i></span><h3 data-i18n="features.f3">Harita &amp; yol tarifi</h3><p data-i18n="features.f3s">Her etkinliğe ayrı konum, tek dokunuşla yol tarifi.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="book-open"></i></span><h3 data-i18n="features.f4">Anı defteri</h3><p data-i18n="features.f4s">Misafirlerinizin güzel dilekleri davetiyede birikir.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="music-2"></i></span><h3 data-i18n="features.f5">Şarkı isteği</h3><p data-i18n="features.f5s">Gecede çalınmasını istedikleri şarkıyı size iletirler.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="headphones"></i></span><h3 data-i18n="features.f6">Arka plan müziği</h3><p data-i18n="features.f6s">Davetiye açılınca seçtiğiniz şarkı çalmaya başlar.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="phone"></i></span><h3 data-i18n="features.f7">Tek dokunuşla iletişim</h3><p data-i18n="features.f7s">Arama ya da WhatsApp mesajı, tek dokunuş uzakta.</p></div>
+            <div class="feature reveal"><span class="f-icon"><i data-lucide="smartphone"></i></span><h3 data-i18n="features.f8">Her ekrana uyumlu</h3><p data-i18n="features.f8s">Telefonda dikey, bilgisayarda geniş; her boyutta tam ekran.</p></div>
           </div>
         </div>
       </section>
 
+      <!-- NASIL ÇALIŞIR -->
       <section class="block" id="nasil">
         <div class="container">
-          <div class="section-title">
-            <h2>Nasıl çalışır?</h2>
-            <p>Üç adımda davetiyen hazır.</p>
+          <div class="section-head section-head--center reveal">
+            <p class="eyebrow" data-i18n="how.eyebrow">Nasıl çalışır</p>
+            <h2 data-i18n="how.title">Üç adımda davetiyeniz hazır</h2>
           </div>
-          <div class="steps">
-            <div class="step"><div class="num">1</div><h3>Şablonunu seç</h3><p>Etkinliğine ve zevkine uygun tasarımı beğen.</p></div>
-            <div class="step"><div class="num">2</div><h3>Bilgilerini ekle</h3><p>İsim, tarih, mekan, fotoğraf ve müziği ayarla.</p></div>
-            <div class="step"><div class="num">3</div><h3>WhatsApp'tan paylaş</h3><p>Sana özel linki misafirlerine gönder.</p></div>
+          <ol class="steps">
+            <li class="step reveal"><span class="num">1</span><h3 data-i18n="how.s1">Tasarımı seçin</h3><p data-i18n="how.s1s">Etkinliğinize ve zevkinize uygun şablonu beğenin.</p></li>
+            <li class="step reveal"><span class="num">2</span><h3 data-i18n="how.s2">Bilgileri gönderin</h3><p data-i18n="how.s2s">İsimler, tarih, mekan, iletişim ve müzik; gerisini biz hazırlarız.</p></li>
+            <li class="step reveal"><span class="num">3</span><h3 data-i18n="how.s3">Linki paylaşın</h3><p data-i18n="how.s3s">WhatsApp'tan gönderin, yanıtlar gelmeye başlasın.</p></li>
+          </ol>
+
+          <div class="events reveal">
+            <span data-i18n="how.ev1">Düğün</span><span data-i18n="how.ev2">Nişan &amp; Söz</span><span data-i18n="how.ev3">Kına</span><span data-i18n="how.ev4">Doğum Günü</span><span data-i18n="how.ev5">Baby Shower</span><span data-i18n="how.ev6">Sünnet</span><span data-i18n="how.ev7">Mezuniyet</span>
           </div>
         </div>
       </section>
 
-      <section class="block" id="ozellikler">
-        <div class="container">
-          <div class="section-title">
-            <h2>Davetiyede neler var?</h2>
+      <!-- SSS -->
+      <section class="block block-paper" id="sss">
+        <div class="container faq-grid">
+          <div class="faq-head reveal">
+            <p class="eyebrow" data-i18n="faq.eyebrow">SSS</p>
+            <h2 data-i18n="faq.title">Merak edilenler</h2>
+            <p data-i18n="faq.text">Başka bir sorunuz mu var? Örneği açıp kendiniz deneyin; misafirleriniz de tam olarak bunu görecek.</p>
           </div>
-          <div class="features">
-            <div class="feature">⏳ Geri sayım</div>
-            <div class="feature">📍 Harita ve yol tarifi</div>
-            <div class="feature">📖 Anı defteri</div>
-            <div class="feature">🎵 Şarkı isteği</div>
-            <div class="feature">🎶 Arka plan müziği</div>
-            <div class="feature">🎬 Video arka plan</div>
-            <div class="feature">📞 Tek dokunuşla arama</div>
-            <div class="feature">💬 WhatsApp bağlantısı</div>
+          <div class="faq-list reveal">
+            <details open>
+              <summary data-i18n="faq.q1">Linki nasıl paylaşırım?</summary>
+              <p data-i18n="faq.a1">Davetiyeniz hazır olduğunda size özel bir link alırsınız. WhatsApp, Instagram ya da SMS ile dilediğiniz kişiye gönderebilirsiniz.</p>
+            </details>
+            <details>
+              <summary data-i18n="faq.q2">Misafirlerimin uygulama indirmesi gerekir mi?</summary>
+              <p data-i18n="faq.a2">Hayır. Davetiye tarayıcıda açılır; telefonda, tablette ve bilgisayarda kurulum gerektirmeden çalışır.</p>
+            </details>
+            <details>
+              <summary data-i18n="faq.q3">Katılım yanıtlarını nasıl görürüm?</summary>
+              <p data-i18n="faq.a3">Misafirleriniz davetiyedeki LCV sayfasından yanıt verir; isimleri, kişi sayıları ve notları kaydedilir.</p>
+            </details>
+            <details>
+              <summary data-i18n="faq.q4">Gönderdikten sonra bilgileri değiştirebilir miyim?</summary>
+              <p data-i18n="faq.a4">Evet. Saat, mekan ya da metin değiştiğinde davetiye güncellenir, link aynı kalır.</p>
+            </details>
+            <details>
+              <summary data-i18n="faq.q5">Birden fazla etkinlik ekleyebilir miyim?</summary>
+              <p data-i18n="faq.a5">Evet. Örneğin nikah ve düğünü aynı davetiyede, her biri kendi tarihi, konumu ve geri sayımıyla gösterebilirsiniz.</p>
+            </details>
           </div>
         </div>
       </section>
 
-      <section class="block" id="ornek">
+      <!-- SON ÇAĞRI -->
+      <section class="block">
         <div class="container">
-          <div class="showcase">
-            <h2>Canlı örneği gör</h2>
-            <p>Zarfı aç, müziği dinle, geri sayımı ve anı defterini dene. Telefonundan bakman en iyisi.</p>
-            <a href="/elcintalha/" class="btn btn-primary">Elçin &amp; Talha'nın davetiyesi</a>
+          <div class="cta-banner reveal">
+            <span class="cta-heart" aria-hidden="true">♥</span>
+            <h2 data-i18n="cta.title">Haberinizi duyurmaya hazır mısınız?</h2>
+            <p data-i18n="cta.text">Editörü açın, bilgilerinizi yazın ve davetiyenizin canlandığını görün. Denemek ücretsiz, üyelik yok.</p>
+            <a href="/editor/" class="btn btn-light" data-i18n="cta.btn">Hemen başla</a>
           </div>
         </div>
       </section>
     </main>
 
-    <footer>
-      <div class="container">
+    <footer class="footer">
+      <div class="container footer-inner">
         <a href="/" class="logo">Bir Haberimiz <span>Var</span></a>
-        <p>Online davetiye · © 2026</p>
+        <p data-i18n="footer">Online davetiye · © 2026</p>
       </div>
     </footer>
   </body>

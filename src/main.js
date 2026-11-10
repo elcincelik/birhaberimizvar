@@ -12,11 +12,11 @@ import {
 import { supabase } from './supabase.js';
 import closedImg from './assets/envelope/closed.png';
 import openImg from './assets/envelope/open.png';
-import paperImg from './assets/envelope/paper.png';
-import invitationImg from './assets/envelope/invitation.png';
 import maskImg from './assets/envelope/mask.png';
 import weddingSong from './assets/audio/weddingsong.mp3';
 import weddingVideo from './assets/video/wedding-background.mp4';
+import { invitation } from './event-config.js';
+import { buildInvitationCard, buildEnvelopePaper } from './invitation-card.js';
 
 /* Sayfa yenilenince tarayıcı eski kaydırma yerine dönmesin, zarftan başlasın */
 if ('scrollRestoration' in history) {
@@ -61,7 +61,7 @@ document.querySelector('#app').innerHTML = `
 
   <div class="scene" id="scene">
     <img src="${openImg}" class="envelope opened" />
-    <img src="${paperImg}" class="paper" />
+      ${buildEnvelopePaper(invitation)}
     <img src="${maskImg}" class="mask" />
     <img src="${closedImg}" class="envelope closed" />
 
@@ -72,15 +72,8 @@ document.querySelector('#app').innerHTML = `
 </section>
 
 <div class="paper-full" id="paperFull">
-  <div class="invitation-stage" id="invitationStage">
-    <div class="invitation-glass">
-      <img
-        src="${invitationImg}"
-        class="real-invitation"
-        id="realInvitation"
-        alt="Elçin ve Talha düğün davetiyesi"
-      />
-    </div>
+   <div class="invitation-stage" id="invitationStage">
+    ${buildInvitationCard(invitation)}
   </div>
 
   <div class="section-nav bottom">
@@ -659,13 +652,12 @@ function waitForFonts() {
 }
 
 async function revealLoadedSite() {
-  const criticalImages = [
+   const criticalImages = [
     document.querySelector('.closed'),
     document.querySelector('.opened'),
-    document.querySelector('.paper'),
-    document.querySelector('.mask'),
-    document.querySelector('#realInvitation')
+    document.querySelector('.mask')
   ];
+
 
   const criticalTasks = [
     ...criticalImages.map(waitForImage),
@@ -1422,6 +1414,9 @@ gsap.set(invitationStage, {
   autoAlpha: 0,
   y: 36,
   scale: 0.88,
+  rotation: -7,
+  rotationY: 55,
+  transformPerspective: 1000,
   transformOrigin: 'center center'
 });
 
@@ -1518,7 +1513,9 @@ seal.addEventListener('click', () => {
       autoAlpha: 1,
       y: 0,
       scale: 1,
-      duration: 0.9,
+      rotation: 0,
+      rotationY: 0,
+      duration: 1.1,
       ease: 'power3.out'
     }, 1.88)
     .to(realInvitation, {

@@ -1,0 +1,72 @@
+/* Panel — renkler/butonlar home.css, bildirim/form parçaları login.css */
+.panel-page.is-loading .panel { visibility: hidden; }
+
+.panel { padding: 44px 0 calc(70px + env(safe-area-inset-bottom, 0px)); max-width: 860px; }
+.panel-head { margin-bottom: 28px; }
+.panel-head h1 { font-size: clamp(2.2rem, 7vw, 3rem); margin-bottom: 4px; }
+.who { color: var(--muted); font-size: .92rem; overflow-wrap: anywhere; }
+
+.card {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 22px;
+  box-shadow: 0 20px 50px rgba(90, 60, 50, .06);
+}
+
+.notice {
+  display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; margin-bottom: 18px;
+  border-radius: 16px; font-size: .9rem; line-height: 1.55;
+}
+.notice svg { flex: none; width: 20px; height: 20px; margin-top: 2px; }
+.notice.is-success { background: #eef6ee; color: #3c6e45; border: 1px solid #d5e9d6; }
+.notice.is-pending { background: #fdf6ea; color: #7a5a2a; border: 1px solid #f0e2c4; }
+.notice p { overflow-wrap: anywhere; }
+.notice .link-btn { margin-top: 4px; color: inherit; text-decoration-color: currentColor; }
+
+/* Misafir → e-posta bağla */
+.claim { padding: 26px; margin-bottom: 30px; }
+.claim-copy { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+.claim-icon {
+  flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  background: var(--rose-soft); color: var(--rose-dark);
+}
+.claim-icon svg { width: 22px; height: 22px; }
+.claim h2 { font-size: 1.6rem; margin-bottom: 4px; }
+.claim-copy p { font-size: .9rem; color: var(--muted); max-width: 520px; }
+
+.claim-form { display: grid; gap: 10px; grid-template-columns: 1fr; margin-bottom: 12px; }
+.claim-form input[type="email"] {
+  width: 100%; font: inherit; font-size: 16px; color: var(--ink);
+  padding: 13px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff;
+}
+.claim-form input[type="email"]:focus { outline: none; border-color: var(--rose); box-shadow: 0 0 0 4px var(--rose-soft); }
+.consent { grid-column: 1 / -1; display: flex; gap: 10px; align-items: flex-start; font-size: .8rem; color: var(--muted); line-height: 1.5; cursor: pointer; }
+.consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--rose); flex: none; }
+.claim-form .auth-msg { grid-column: 1 / -1; }
+.claim .google-btn { width: 100%; }
+
+/* Davetiye listesi */
+.list-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.list-head h2 { font-size: 1.8rem; }
+.inv-list { display: grid; gap: 12px; }
+.loading { padding: 20px 4px; font-size: .88rem; color: var(--muted); }
+.inv { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; flex-wrap: wrap; }
+.inv h3 { font-size: 1.4rem; margin: 6px 0 2px; }
+.inv p { font-size: .82rem; color: var(--muted); }
+.inv-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.inv-actions .btn { gap: 6px; }
+.inv-actions svg { width: 16px; height: 16px; }
+.badge-status {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: .68rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--cream); color: var(--muted); border: 1px solid var(--line);
+}
+.badge-status.is-yayinda { background: #eef6ee; color: #3c6e45; border-color: #d5e9d6; }
+.badge-status.is-odeme_bekliyor { background: #fdf6ea; color: #7a5a2a; border-color: #f0e2c4; }
+
+.empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 40px 24px; }
+.empty h3 { font-size: 1.6rem; }
+.empty p { color: var(--muted); font-size: .9rem; max-width: 380px; margin-bottom: 8px; }
+
+@media (min-width: 640px) {
+  .claim { padding: 30px 32px; }
+  .claim-form { grid-template-columns: 1fr auto; }
+}

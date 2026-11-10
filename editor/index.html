@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Davetiye editörü | Bir Haberimiz Var</title>
+    <meta name="robots" content="noindex" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="/heart.png" />
+    <link rel="stylesheet" href="/src/css/home.css" />
+    <link rel="stylesheet" href="/src/css/login.css" />
+    <link rel="stylesheet" href="/src/css/panel.css" />
+    <link rel="stylesheet" href="/src/css/editor.css" />
+    <script type="module" src="/src/editor.js"></script>
+  </head>
+
+  <body data-page="editor" class="editor-page">
+    <header class="topbar is-scrolled">
+      <div class="topbar-inner ed-topbar">
+        <a href="/" class="logo" aria-label="Bir Haberimiz Var ana sayfa">Bir Haberimiz <span>Var</span></a>
+        <span class="save-pill" id="savePill" data-state="idle" aria-live="polite"></span>
+        <div class="topbar-actions">
+          <div class="lang-switch" role="group" aria-label="Dil / Language">
+            <button type="button" data-lang="tr" aria-pressed="true">TR</button>
+            <button type="button" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <a href="/panel/" class="btn btn-outline btn-small hide-xs" data-i18n="nav.panel">Panelim</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="ed">
+      <!-- FORM -->
+      <main class="ed-form" id="edForm">
+        <div class="ed-intro">
+          <p class="eyebrow" data-i18n="ed.eyebrow">Davetiye editörü</p>
+          <h1 data-i18n="ed.title">Davetiyenizi hazırlayın</h1>
+          <p data-i18n="ed.sub">Yazdıkça sağdaki önizleme güncellenir. Taslağınız otomatik kaydedilir.</p>
+        </div>
+
+        <!-- 1 Tasarım -->
+        <section class="ed-sec" data-preview="invite">
+          <h2><span class="n">1</span><span data-i18n="ed.s1">Tasarım</span></h2>
+          <div class="tpl-grid">
+            <label class="tpl is-on">
+              <input type="radio" name="template" value="kapi" checked />
+              <span class="tpl-img"><img src="/src/assets/themes/sakayik/door-mobile.jpg" alt="" /><img class="seal" src="/src/assets/themes/sakayik/seal.png" alt="" /></span>
+              <b data-i18n="designs.d1">Kapı · Şakayık</b>
+            </label>
+            <label class="tpl is-off" aria-disabled="true">
+              <input type="radio" name="template" value="zarf" disabled />
+              <span class="tpl-img tpl-env"><img src="/src/assets/home/zarf.jpg" alt="" /></span>
+              <b><span data-i18n="designs.d2">Zarf</span> <small data-i18n="ed.soon">Yakında</small></b>
+            </label>
+          </div>
+        </section>
+
+        <!-- 2 İsimler -->
+        <section class="ed-sec" data-preview="invite">
+          <h2><span class="n">2</span><span data-i18n="ed.s2">İsimler ve mesaj</span></h2>
+          <div class="seg" role="radiogroup" aria-label="Kişi sayısı">
+            <button type="button" data-single="0" aria-pressed="true" data-i18n="ed.couple">Çift</button>
+            <button type="button" data-single="1" aria-pressed="false" data-i18n="ed.single">Tek kişi</button>
+          </div>
+          <div class="row2">
+            <label class="field"><span data-i18n="ed.name1">1. isim</span><input data-path="names.0" maxlength="40" placeholder="Ayşe" /></label>
+            <label class="field" id="name2Field"><span data-i18n="ed.name2">2. isim</span><input data-path="names.1" maxlength="40" placeholder="Can" /></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span data-i18n="ed.eyebrowLabel">Üst yazı</span><input data-path="eyebrow" maxlength="40" placeholder="DAVETLİSİNİZ" /></label>
+            <label class="field"><span data-i18n="ed.monogram">Mühür harfleri</span><input data-path="monogram" maxlength="8" placeholder="A & C" /></label>
+          </div>
+          <label class="field"><span data-i18n="ed.message">Davet mesajı</span>
+            <textarea data-path="message" maxlength="300" rows="3" placeholder="Hayatımızın en güzel gününde sizleri de aramızda görmekten mutluluk duyarız."></textarea>
+          </label>
+        </section>
+
+        <!-- 3 Etkinlikler -->
+        <section class="ed-sec" data-preview="locations">
+          <h2><span class="n">3</span><span data-i18n="ed.s3">Etkinlikler</span></h2>
+          <p class="sec-hint" data-i18n="ed.s3hint">Nikah ve düğün gibi birden fazla etkinlik ekleyebilirsiniz. Her biri kendi geri sayımı ve haritasıyla görünür.</p>
+          <div id="events"></div>
+          <button type="button" class="add-btn" id="addEvent"><i data-lucide="plus"></i><span data-i18n="ed.addEvent">Etkinlik ekle</span></button>
+        </section>
+
+        <!-- 4 Notlar & LCV -->
+        <section class="ed-sec" data-preview="reminder">
+          <h2><span class="n">4</span><span data-i18n="ed.s4">Hatırlatma ve LCV</span></h2>
+          <label class="field"><span data-i18n="ed.remTitle">Hatırlatma başlığı</span><input data-path="reminder.title" maxlength="60" placeholder="Hatırlatma ve Notlar" /></label>
+          <label class="field"><span data-i18n="ed.remText">Hatırlatma metni <small>(boş bırakılırsa bu bölüm gösterilmez)</small></span>
+            <textarea data-path="reminder.text" maxlength="400" rows="3" placeholder="10 Ağustos tarihine kadar katılım durumunuzu belirtmenizi rica ederiz."></textarea>
+          </label>
+          <div class="row2" data-preview="rsvp">
+            <label class="field"><span data-i18n="ed.rsvpYes">"Katılıyorum" butonu</span><input data-path="rsvpYes" maxlength="40" placeholder="Orada olacağım!" /></label>
+            <label class="field"><span data-i18n="ed.rsvpNo">"Katılamıyorum" butonu</span><input data-path="rsvpNo" maxlength="40" placeholder="Gelemiyorum :(" /></label>
+          </div>
+        </section>
+
+        <!-- 5 İletişim -->
+        <section class="ed-sec" data-preview="contact">
+          <h2><span class="n">5</span><span data-i18n="ed.s5">İletişim</span></h2>
+          <p class="sec-hint" data-i18n="ed.s5hint">Misafirleriniz bu kişileri tek dokunuşla arayabilir ya da WhatsApp'tan yazabilir.</p>
+          <div id="contacts"></div>
+          <button type="button" class="add-btn" id="addContact"><i data-lucide="plus"></i><span data-i18n="ed.addContact">Kişi ekle</span></button>
+          <label class="field"><span data-i18n="ed.songThanks">Şarkı isteği teşekkür mesajı</span><input data-path="songSuccess" maxlength="160" placeholder="Bu şarkıyı çalmak için sabırsızlanıyoruz. ♫" /></label>
+        </section>
+
+        <!-- 6 Yayınla -->
+        <section class="ed-sec ed-publish" id="publish">
+          <h2><span class="n">6</span><span data-i18n="ed.s6">Bağlantı ve yayın</span></h2>
+
+          <div id="pubLocal" class="notice is-pending" hidden>
+            <i data-lucide="hard-drive"></i>
+            <div>
+              <p data-i18n="ed.localOnly">Taslağınız şu an yalnızca bu cihazda saklanıyor. Bağlantı almak ve yayınlamak için giriş yapın.</p>
+              <a class="link-btn" href="/giris/?next=/editor/" data-i18n="ed.loginToSave">Giriş yap ve kaydet</a>
+            </div>
+          </div>
+
+          <div id="pubCloud" hidden>
+            <label class="field"><span data-i18n="ed.slug">Davetiye bağlantınız</span>
+              <span class="slug">
+                <span class="slug-pre">birhaberimizvar.com/kapi/?d=</span>
+                <input id="slugInput" maxlength="60" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="ayse-can" />
+              </span>
+            </label>
+            <div class="slug-actions">
+              <button type="button" class="btn btn-outline btn-small" id="slugSave" data-i18n="ed.slugSave">Bağlantıyı kaydet</button>
+              <a class="btn btn-outline btn-small" id="slugOpen" target="_blank" rel="noopener" hidden data-i18n="ed.open">Aç</a>
+              <button type="button" class="btn btn-outline btn-small" id="slugCopy" hidden data-i18n="ed.copy">Kopyala</button>
+            </div>
+            <p class="auth-msg" id="slugMsg" hidden></p>
+
+            <div class="pub-box" id="pubGuest" hidden>
+              <h3 data-i18n="ed.pubGuestTitle">Ödemeye geçmeden önce</h3>
+              <p data-i18n="ed.pubGuestText">E-postanızı ekleyin; davetiyenizi her cihazdan yönetin. Şifre yok.</p>
+              <form class="claim-form" id="claimForm" novalidate>
+                <input type="email" id="claimEmail" autocomplete="email" inputmode="email" placeholder="ornek@mail.com" data-i18n-attr="aria-label:login.email" aria-label="E-posta" />
+                <button type="submit" class="btn btn-primary" id="claimSubmit" data-i18n="panel.claimBtn">E-postamı ekle</button>
+                <label class="consent">
+                  <input type="checkbox" id="claimConsent" />
+                  <span data-i18n="panel.consent"><a href="/kvkk/">Aydınlatma Metni</a>'ni okudum; davetiyemle ilgili e-posta almayı kabul ediyorum.</span>
+                </label>
+                <p class="auth-msg" id="claimMsg" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div class="notice is-pending" id="pubPending" hidden>
+              <i data-lucide="mail"></i>
+              <p id="pubPendingText"></p>
+            </div>
+
+            <div class="pub-box" id="pubReady" hidden>
+              <h3 data-i18n="ed.pubReadyTitle">Her şey hazır</h3>
+              <p id="pubReadyText" data-i18n="ed.pubReadyText">Davetiyenizi kontrol ettiyseniz ödemeye geçebilirsiniz.</p>
+              <button type="button" class="btn btn-primary" id="payBtn" data-i18n="ed.pay">Ödemeye geç</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ÖNİZLEME -->
+      <aside class="ed-preview" id="edPreview" aria-label="Önizleme">
+        <div class="pv-bar">
+          <span data-i18n="ed.preview">Önizleme</span>
+          <div class="pv-actions">
+            <button type="button" class="pv-btn" id="replay"><i data-lucide="rotate-ccw"></i><span data-i18n="ed.replay">Kapıyı oynat</span></button>
+            <button type="button" class="pv-btn pv-close" id="closePreview" aria-label="Kapat"><i data-lucide="x"></i></button>
+          </div>
+        </div>
+        <div class="pv-stage" id="pvStage">
+          <div class="pv-phone" id="pvPhone">
+            <iframe id="pvFrame" title="Davetiye önizlemesi"></iframe>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <button type="button" class="btn btn-primary pv-fab" id="openPreview"><i data-lucide="eye"></i><span data-i18n="ed.preview">Önizleme</span></button>
+  </body>
+</html>
